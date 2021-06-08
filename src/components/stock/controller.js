@@ -1,10 +1,11 @@
+const dayjs = require("dayjs");
 const {
+  retrieveStockRecord,
   retrieveStockRecords,
   insertStockRecord,
   updateStockRecord,
   removeStockRecord,
 } = require("./request");
-const dayjs = require("dayjs");
 
 async function retrieveStock(type) {
   const records = await retrieveStockRecords(type);
@@ -22,16 +23,19 @@ async function insertStock(item) {
       type,
       quantity: item.quantity,
       product: item.product,
+      comment: item.comment,
     };
   } else if (type === "oil") {
-    const now = dayjs();
-    const oilId = `T${now.date()}${now.month()}${now.year()}`;
+    const oilContainer = item.liters > 20 ? "T" : "B";
+    const now = dayjs().format("DDMMYY");
+    const oilId = `${oilContainer}${now}`;
 
     itemParsed = {
       type,
       oilId,
       liters: item.liters,
-      availableLiters: item.availableLiters,
+      availableLitters: item.availableLitters,
+      comment: item.comment,
       movements: [],
     };
   }
@@ -42,15 +46,31 @@ async function insertStock(item) {
   return { status: 404 };
 }
 
-async function updateStock(id, newData) {
-  const { nModified, ok } = await updateStockRecord(id, newData);
+async function updateStock(id, type, newData) {
+  let newDataParsed;
+  if (type === "spare") {
+    newDataParsed = {
+      quantity: newData.quantity,
+      product: newData.product,
+      comment: newData.comment,
+    };
+  } else if (type === "oil") {
+    newDataParsed = {
+      liters: newData.liters,
+      availableLitters: newData.availableLitters,
+      comment: newData.comment,
+      movements: newData.movements
+    };
+  }
 
-  if (ok) return { status: 200, body: { nModified, ok } };
-  return { status: 404 };
+  const { nModified, ok } = await updateStockRecord(id, newDataParsed, type);
+
+  if (nModified) return { status: 200, body: { nModified, ok } };
+  return { status: 400 };
 }
 
-async function removeStock(id) {
-  const removed = await removeStockRecord(id);
+async function removeStock(id, type) {
+  const removed = await removeStockRecord(id, type);
 
   if (removed !== null) return { status: 200 };
   return { status: 404 };

@@ -3,14 +3,14 @@ const mongoose = require("mongoose");
 const oilSchema = new mongoose.Schema(
   {
     type: String, // spare || oil
-    oilId: String, //
     liters: Number,
     availableLitters: Number,
+    comment: String,
     movements: [
       {
         observation: String,
         littersTaken: Number,
-        date: Number,
+        date: String,
       },
     ],
   },
