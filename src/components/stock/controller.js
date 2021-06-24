@@ -1,6 +1,5 @@
 const dayjs = require("dayjs");
 const {
-  retrieveStockRecord,
   retrieveStockRecords,
   insertStockRecord,
   updateStockRecord,

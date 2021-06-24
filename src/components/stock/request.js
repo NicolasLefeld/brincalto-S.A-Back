@@ -1,11 +1,6 @@
 const { oilSchema } = require("../../schema/oil");
 const { spareSchema } = require("../../schema/spare");
 
-async function retrieveStockRecord(id, type) {
-  if (type === "oil") return oilSchema.find({ _id: id, type });
-  if (type === "spare") return spareSchema.find({ _id: id, type });
-}
-
 async function retrieveStockRecords(type) {
   if (type === "oil") return oilSchema.find({ type });
   if (type === "spare") return spareSchema.find({ type });
@@ -32,7 +27,6 @@ async function removeStockRecord(id, type) {
 }
 
 module.exports = {
-  retrieveStockRecord,
   retrieveStockRecords,
   insertStockRecord,
   updateStockRecord,
