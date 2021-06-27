@@ -61,6 +61,7 @@ async function updateStock(id, type, newData) {
       movements: newData.movements
     };
   }
+  console.log(id, newDataParsed, type);
 
   const { nModified, ok } = await updateStockRecord(id, newDataParsed, type);
 
