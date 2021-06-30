@@ -8,9 +8,9 @@ const oilSchema = new mongoose.Schema(
     comment: String,
     movements: [
       {
-        observation: String,
+        comment: String,
         littersTaken: Number,
-        date: String,
+        date: Date,
       },
     ],
   },

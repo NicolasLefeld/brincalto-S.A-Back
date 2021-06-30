@@ -42,11 +42,12 @@ async function insertStock(item) {
   const created = await insertStockRecord(itemParsed);
 
   if (created) return { status: 201, body: created };
-  return { status: 404 };
+  return { status: 500 };
 }
 
 async function updateStock(id, type, newData) {
   let newDataParsed;
+  
   if (type === "spare") {
     newDataParsed = {
       quantity: newData.quantity,
@@ -58,15 +59,19 @@ async function updateStock(id, type, newData) {
       liters: newData.liters,
       availableLitters: newData.availableLitters,
       comment: newData.comment,
-      movements: newData.movements
+    };
+  } else if (type === "oilMovement") {
+    newDataParsed = {
+      littersTaken: newData.littersTaken,
+      comment: newData.comment,
+      date: new Date(),
     };
   }
-  console.log(id, newDataParsed, type);
 
   const { nModified, ok } = await updateStockRecord(id, newDataParsed, type);
 
   if (nModified) return { status: 200, body: { nModified, ok } };
-  return { status: 400 };
+  return { status: 200 };
 }
 
 async function removeStock(id, type) {

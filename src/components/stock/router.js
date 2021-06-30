@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const validator = require("express-joi-validation").createValidator({});
-const { postStockSchema } = require("./schemas");
+const { postStockSchema, updateStockSchema } = require("./schemas");
 const {
   retrieveStock,
   insertStock,
@@ -24,9 +24,9 @@ router
     res.status(status).json(body);
   })
 
-  .put("/:id", async (req, res) => {
+  .put("/:id", validator.body(updateStockSchema), async (req, res) => {
     const { id } = req.params;
-    const { type } = req.query
+    const { type } = req.query;
 
     const { status, body } = await updateStock(id, type, req.body);
 
@@ -35,7 +35,7 @@ router
 
   .delete("/:id", async (req, res) => {
     const { id } = req.params;
-    const { type } = req.query
+    const { type } = req.query;
 
     const { status, body } = await removeStock(id, type);
 
