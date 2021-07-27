@@ -20,5 +20,6 @@ app.use("/purchase", require("./components/purchase/router"));
 app.use("/remito", require("./components/remito/router"));
 app.use("/sale", require("./components/sale/router"));
 app.use("/vehicle", require("./components/vehicle/router"));
+app.use("/auth", require("./components/auth/router"));
 
 module.exports = app;
