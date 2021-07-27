@@ -34,6 +34,7 @@ async function insertStock(item) {
       oilId,
       liters: item.liters,
       availableLitters: item.availableLitters,
+      costPerLitter: item.costPerLitter,
       comment: item.comment,
       movements: [],
     };
@@ -57,12 +58,14 @@ async function updateStock(id, type, newData) {
   } else if (type === "oil") {
     newDataParsed = {
       liters: newData.liters,
+      costPerLitter: newData.costPerLitter,
       availableLitters: newData.availableLitters,
       comment: newData.comment,
     };
   } else if (type === "oilMovement") {
     newDataParsed = {
       littersTaken: newData.littersTaken,
+      costPerLitter: newData.costPerLitter,
       comment: newData.comment,
       date: new Date(),
     };

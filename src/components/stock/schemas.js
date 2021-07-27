@@ -10,6 +10,7 @@ const postSpareSchema = Joi.object({
 const postOilSchema = Joi.object({
   type: Joi.string().required(),
   liters: Joi.number().required(),
+  costPerLitter: Joi.number().required(),
   availableLitters: Joi.number().required(),
   comment: Joi.string().required(),
 });
@@ -32,6 +33,7 @@ const updateOilSchema = Joi.object({
   type: Joi.string().required(),
   liters: Joi.number().required(),
   availableLitters: Joi.number().required(),
+  costPerLitter: Joi.number().required(),
   comment: Joi.string().required(),
 });
 
