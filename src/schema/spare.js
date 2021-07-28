@@ -6,6 +6,12 @@ const spareSchema = new mongoose.Schema(
     quantity: Number,
     product: String,
     comment: String,
+    movements: [
+      {
+        comment: String,
+        date: Date,
+      },
+    ],
   },
   { collection: "stock" }
 );

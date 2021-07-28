@@ -23,6 +23,7 @@ async function insertStock(item) {
       quantity: item.quantity,
       product: item.product,
       comment: item.comment,
+      movements: [],
     };
   } else if (type === "oil") {
     const oilContainer = item.liters > 20 ? "T" : "B";
@@ -62,10 +63,15 @@ async function updateStock(id, type, newData) {
       availableLitters: newData.availableLitters,
       comment: newData.comment,
     };
+  } else if (type === "spareMovement") {
+    newDataParsed = {
+      quantity: newData.quantity,
+      comment: newData.comment,
+      date: new Date(),
+    };
   } else if (type === "oilMovement") {
     newDataParsed = {
       littersTaken: newData.littersTaken,
-      costPerLitter: newData.costPerLitter,
       comment: newData.comment,
       date: new Date(),
     };

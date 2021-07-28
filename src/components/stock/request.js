@@ -19,6 +19,15 @@ async function insertStockRecord(itemParsed) {
 async function updateStockRecord(id, newData, type) {
   if (type === "spare") return spareSchema.updateOne({ _id: id }, newData);
   if (type === "oil") return oilSchema.updateOne({ _id: id }, newData);
+  if (type === "spareMovement") {
+    return spareSchema.updateOne(
+      { _id: id },
+      {
+        $push: { movements: { comment: newData.comment, date: newData.date } },
+        quantity: newData.quantity,
+      }
+    );
+  }
   if (type === "oilMovement") {
     const oil = await oilSchema.find({ _id: id });
     let availableLitters = oil[0].availableLitters;
