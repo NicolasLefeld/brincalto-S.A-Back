@@ -11,19 +11,18 @@ const {
 async function retrieveUsers() {
   const records = await retrieveUsersRecords();
 
-  const recordsMapped = records.map(({ role, username, email, _id }) => {
-    return { role, username, email, _id };
+  const recordsMapped = records.map(({ role, email, _id }) => {
+    return { role, email, _id };
   });
 
   if (recordsMapped.length > 0) return { status: 200, body: recordsMapped };
   return { status: 404, body: "Users not found" };
 }
 
-async function insertUser({ username, email, password, role }) {
+async function insertUser({ email, password, role }) {
   const passwordHashed = bcrypt.hashSync(password, 8);
 
   const { created, status } = await insertUserRecord(
-    username,
     email,
     passwordHashed,
     role
@@ -33,8 +32,8 @@ async function insertUser({ username, email, password, role }) {
   return { status: 500 };
 }
 
-async function login({ username, password }) {
-  const userFound = await retrieveUsersRecords({ username });
+async function login({ email, password }) {
+  const userFound = await retrieveUsersRecords({ email });
 
   if (userFound.length === 0) return { status: 404, body: "User Not found" };
 
@@ -51,7 +50,6 @@ async function login({ username, password }) {
   const accessToken = jwt.sign(
     {
       id: userFound[0].id,
-      username: userFound[0].username,
       email: userFound[0].email,
       role: userFound[0].role,
     },

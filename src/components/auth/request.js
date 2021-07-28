@@ -4,13 +4,12 @@ async function retrieveUsersRecords(filter = {}) {
   return userSchema.find(filter);
 }
 
-async function insertUserRecord(username, email, password, role) {
-  const user = await userSchema.find({ username });
+async function insertUserRecord(email, password, role) {
+  const user = await userSchema.find({ email });
 
   if (user.length) return { created: "User already exist", status: 200 };
 
   const created = await userSchema.create({
-    username,
     email,
     password,
     role,
