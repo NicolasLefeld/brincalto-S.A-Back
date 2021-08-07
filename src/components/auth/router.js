@@ -1,29 +1,35 @@
-const router = require("express").Router();
-const { retrieveUsers, insertUser, login, updateUser, removeUser } = require("./controller");
+const router = require('express').Router();
+const {
+  retrieveUsers,
+  insertUser,
+  login,
+  updateUser,
+  removeUser,
+} = require('./controller');
 
 router.use(function (req, res, next) {
   res.header(
-    "Access-Control-Allow-Headers",
-    "x-access-token, Origin, Content-Type, Accept"
+    'Access-Control-Allow-Headers',
+    'x-access-token, Origin, Content-Type, Accept',
   );
   next();
 });
 
 router
 
-  .get("/list", async (req, res) => {
+  .get('/list', async (req, res) => {
     const { status, body } = await retrieveUsers();
 
     res.status(status).json(body);
   })
 
-  .get("/", async (req, res) => {
+  .put('/', async (req, res) => {
     const { status, body } = await login(req.body);
 
     res.status(status).json(body);
   })
 
-  .post("/", async (req, res) => {
+  .post('/', async (req, res) => {
     const { status, body } = await insertUser(req.body);
 
     res.status(status).json(body);
