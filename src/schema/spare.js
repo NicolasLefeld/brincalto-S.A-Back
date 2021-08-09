@@ -10,6 +10,7 @@ const spareSchema = new mongoose.Schema(
       {
         comment: String,
         date: Date,
+        quantityTaken: Number,
       },
     ],
   },
