@@ -2,15 +2,16 @@ const mongoose = require("mongoose");
 
 const oilSchema = new mongoose.Schema(
   {
-    type: String, // spare || oil
-    oilId: String, //
+    type: String,
     liters: Number,
     availableLitters: Number,
+    costPerLitter: Number,
+    comment: String,
     movements: [
       {
-        observation: String,
+        comment: String,
         littersTaken: Number,
-        date: Number,
+        date: Date,
       },
     ],
   },

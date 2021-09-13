@@ -12,9 +12,9 @@ router
   })
 
   .post('/', async (req, res) => {
-    const { name, checkingAccount, comment } = req.body;
+    const { name, checkingAccount, comment, cuit, address } = req.body;
 
-    const { status, body } = await insertProvider(name, checkingAccount, comment);
+    const { status, body } = await insertProvider(name, checkingAccount, comment, cuit, address);
 
     res.status(status).json(body);
   })

@@ -2,7 +2,8 @@ const { oilSchema } = require("../../schema/oil");
 const { spareSchema } = require("../../schema/spare");
 
 async function retrieveStockRecords(type) {
-  return stockSchema.find({ type });
+  if (type === "oil") return oilSchema.find({ type });
+  if (type === "spare") return spareSchema.find({ type });
 }
 
 async function insertStockRecord(itemParsed) {
@@ -15,12 +16,45 @@ async function insertStockRecord(itemParsed) {
   return created;
 }
 
-async function updateStockRecord(id, newData) {
-  return stockSchema.updateOne({ _id: id }, newData);
+async function updateStockRecord(id, newData, type) {
+  if (type === "spare") return spareSchema.updateOne({ _id: id }, newData);
+  if (type === "oil") return oilSchema.updateOne({ _id: id }, newData);
+  if (type === "spareMovement") {
+    const spare = await spareSchema.find({ _id: id });
+    let spareQuantity = spare[0].quantity;
+
+    spareQuantity -= newData.quantity;
+
+    return spareSchema.updateOne(
+      { _id: id },
+      {
+        $push: {
+          movements: {
+            comment: newData.comment,
+            date: newData.date,
+            quantityTaken: spareQuantity,
+          },
+        },
+        quantity: newData.quantity,
+      }
+    );
+  }
+  if (type === "oilMovement") {
+    const oil = await oilSchema.find({ _id: id });
+    let availableLitters = oil[0].availableLitters;
+
+    availableLitters -= newData.littersTaken;
+
+    return oilSchema.updateOne(
+      { _id: id },
+      { $push: { movements: newData }, availableLitters: availableLitters }
+    );
+  }
 }
 
-async function removeStockRecord(id) {
-  return stockSchema.findByIdAndDelete(id);
+async function removeStockRecord(id, type) {
+  if (type === "oil") return oilSchema.findByIdAndDelete(id);
+  if (type === "spare") return spareSchema.findByIdAndDelete(id);
 }
 
 module.exports = {
