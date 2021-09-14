@@ -6,14 +6,14 @@ async function retrieveProviderRecords(filter = {}) {
 
 async function insertProviderRecord(
   name,
-  checkingAccount,
+  purchases,
   comment,
   cuit,
   address
 ) {
   const created = await providerSchema.create({
     name,
-    checking_account: checkingAccount,
+    purchases,
     comment,
     cuit,
     address,
@@ -30,9 +30,26 @@ async function removeProviderRecord(id) {
   return providerSchema.findByIdAndDelete(id);
 }
 
+async function updateProviderpurchases(id, invoiceData) {
+  return providerSchema.updateOne(
+    { _id: id },
+    {
+      $push: {
+        purchases: {
+          concept: invoiceData.comment,
+          date: invoiceData.date,
+          amount: invoiceData.amount,
+          invoice_id: invoiceData.invoice_id,
+        },
+      },
+    }
+  );
+}
+
 module.exports = {
   retrieveProviderRecords,
   insertProviderRecord,
   updateProviderRecord,
   removeProviderRecord,
+  updateProviderpurchases,
 };

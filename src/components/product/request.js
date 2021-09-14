@@ -13,7 +13,6 @@ async function insertProductRecord(name) {
 }
 
 async function updateProductRecord(id, newData) {
-  console.log(id);
   return productSchema.updateOne({ _id: id }, newData);
 }
 

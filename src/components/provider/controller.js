@@ -9,11 +9,11 @@ async function retrieveProvider() {
   const records = await retrieveProviderRecords();
 
   const body = records.map(
-    ({ _id, name, checking_account, comment, cuit, address }) => {
+    ({ _id, name, purchases, comment, cuit, address }) => {
       return {
         _id,
         name,
-        checkingAccount: checking_account,
+        purchases,
         comment,
         cuit,
         address,
@@ -25,10 +25,10 @@ async function retrieveProvider() {
   return { status: 404 };
 }
 
-async function insertProvider(name, checkingAccount, comment, cuit, address) {
+async function insertProvider(name, comment, cuit, address) {
   const created = await insertProviderRecord(
     name,
-    checkingAccount,
+    [],
     comment,
     cuit,
     address
@@ -42,7 +42,7 @@ async function updateProvider(id, data) {
   const newData = {
     name: data.name,
     comment: data.comment,
-    checking_account: data.checkingAccount,
+    purchases: data.purchases,
     cuit: data.cuit, 
     address: data.address
   };
