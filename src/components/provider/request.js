@@ -7,6 +7,7 @@ async function retrieveProviderRecords(filter = {}) {
 async function insertProviderRecord(
   name,
   purchases,
+  checkingAccount,
   comment,
   cuit,
   address
@@ -14,6 +15,7 @@ async function insertProviderRecord(
   const created = await providerSchema.create({
     name,
     purchases,
+    checkingAccount,
     comment,
     cuit,
     address,
@@ -56,5 +58,5 @@ module.exports = {
   updateProviderRecord,
   removeProviderRecord,
   updateProviderpurchases,
-  retrieveProviderRecordById
+  retrieveProviderRecordById,
 };

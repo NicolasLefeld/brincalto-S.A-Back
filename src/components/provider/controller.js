@@ -11,7 +11,7 @@ async function retrieveProvider() {
   const body = records.map(
     ({ _id, name, purchases, comment, cuit, address }) => {
       let checkingAccount = 0;
-      
+
       purchases.forEach((purchase) => {
         checkingAccount += parseFloat(purchase.amount);
       });
@@ -32,8 +32,22 @@ async function retrieveProvider() {
   return { status: 404 };
 }
 
-async function insertProvider(name, comment, cuit, address) {
-  const created = await insertProviderRecord(name, [], comment, cuit, address);
+async function insertProvider(
+  name,
+  purchases,
+  checkingAccount,
+  comment,
+  cuit,
+  address
+) {
+  const created = await insertProviderRecord(
+    name,
+    purchases,
+    checkingAccount,
+    comment,
+    cuit,
+    address
+  );
 
   if (created) return { status: 201, body: created };
   return { status: 404 };
@@ -42,8 +56,9 @@ async function insertProvider(name, comment, cuit, address) {
 async function updateProvider(id, data) {
   const newData = {
     name: data.name,
+    purchases: data.purchase,
+    checkingAccount: data.checkingAccount,
     comment: data.comment,
-    purchases: data.purchases,
     cuit: data.cuit,
     address: data.address,
   };

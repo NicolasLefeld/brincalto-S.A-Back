@@ -6,11 +6,12 @@ const providerSchema = new mongoose.Schema(
     comment: String,
     cuit: String,
     address: String,
+    checkingAccount: Number,
     purchases: [
       {
         concept: String,
         date: Date,
-        amount: String,
+        amount: Number,
         invoice_id: String,
       },
     ],
