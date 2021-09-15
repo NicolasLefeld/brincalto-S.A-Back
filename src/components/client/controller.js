@@ -1,3 +1,4 @@
+const { retrieveProductRecordsById } = require("../product/request");
 const {
   retrieveClientRecords,
   insertClientRecord,
@@ -8,17 +9,9 @@ const {
 async function retrieveClient() {
   const records = await retrieveClientRecords();
 
-  const body = records.map(
-    ({
-      _id,
-      name,
-      cuit,
-      address,
-      contacto,
-      assigned_products,
-      checkingAccount,
-    }) => {
-      return {
+  const body = await Promise.all(
+    records.map(
+      async ({
         _id,
         name,
         cuit,
@@ -26,8 +19,22 @@ async function retrieveClient() {
         contacto,
         assigned_products,
         checkingAccount,
-      };
-    }
+      }) => {
+        return {
+          _id,
+          name,
+          cuit,
+          address,
+          contacto,
+          assigned_products: await Promise.all(
+            assigned_products.map(
+              async (product) => await retrieveProductRecordsById(product)
+            )
+          ),
+          checkingAccount,
+        };
+      }
+    )
   );
 
   if (records.length > 0) return { status: 200, body };

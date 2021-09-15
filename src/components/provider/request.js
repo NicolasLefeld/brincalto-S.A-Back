@@ -46,10 +46,15 @@ async function updateProviderpurchases(id, invoiceData) {
   );
 }
 
+async function retrieveProviderRecordById(id) {
+  return providerSchema.findById(id);
+}
+
 module.exports = {
   retrieveProviderRecords,
   insertProviderRecord,
   updateProviderRecord,
   removeProviderRecord,
   updateProviderpurchases,
+  retrieveProviderRecordById
 };

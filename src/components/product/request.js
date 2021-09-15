@@ -20,9 +20,14 @@ async function removeProductRecord(id) {
   return productSchema.findByIdAndDelete(id);
 }
 
+async function retrieveProductRecordsById(id) {
+  return productSchema.findById(id);
+}
+
 module.exports = {
   retrieveProductRecords,
   insertProductRecord,
   updateProductRecord,
   removeProductRecord,
+  retrieveProductRecordsById
 };

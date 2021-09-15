@@ -4,24 +4,17 @@ const {
   updatePurchasesRecord,
   removePurchasesRecord,
 } = require("./request");
-const { updateProviderpurchases } = require("../provider/request");
+const {
+  updateProviderpurchases,
+  retrieveProviderRecordById,
+} = require("../provider/request");
 
 async function retrievePurchases() {
   const records = await retrievePurchasesRecords();
 
-  const body = records.map(
-    ({
-      _id,
-      provider_id,
-      date,
-      invoice_id,
-      concept,
-      net,
-      netPlusIva,
-      total,
-      extras,
-    }) => {
-      return {
+  const body = await Promise.all(
+    records.map(
+      async ({
         _id,
         provider_id,
         date,
@@ -31,8 +24,22 @@ async function retrievePurchases() {
         netPlusIva,
         total,
         extras,
-      };
-    }
+      }) => {
+        const providerParsed = await retrieveProviderRecordById(provider_id);
+
+        return {
+          _id,
+          provider: { name: providerParsed.name, _id: providerParsed._id },
+          date,
+          invoice_id,
+          concept,
+          net,
+          netPlusIva,
+          total,
+          extras,
+        };
+      }
+    )
   );
 
   if (records.length > 0) return { status: 200, body };
