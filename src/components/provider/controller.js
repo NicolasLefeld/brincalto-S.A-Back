@@ -9,18 +9,18 @@ async function retrieveProvider() {
   const records = await retrieveProviderRecords();
 
   const body = records.map(
-    ({ _id, name, purchases, comment, cuit, address }) => {
-      let checkingAccount = 0;
+    ({ _id, name, purchases, comment, cuit, address, checkingAccount }) => {
+      let checkingAccountTotal = checkingAccount;
 
       purchases.forEach((purchase) => {
-        checkingAccount += parseFloat(purchase.amount);
+        checkingAccountTotal += parseFloat(purchase.amount);
       });
 
       return {
         _id,
         name,
         purchases,
-        checkingAccount,
+        checkingAccount: purchases.length > 0 ? checkingAccountTotal : checkingAccount,
         comment,
         cuit,
         address,
