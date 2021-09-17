@@ -1,49 +1,40 @@
 const {
-  retrievePurchasesRecords,
-  insertPurchasesRecord,
-  updatePurchasesRecord,
-  removePurchasesRecord,
+  retrievePurchasesDb,
+  insertPurchasesDb,
+  updatePurchasesDb,
+  removePurchasesDb,
 } = require("./request");
 const {
   updateProviderpurchases,
-  retrieveProviderRecordById,
-} = require("../provider/request");
+  retrieveProviderDbById,
+} = require("../providers/request");
 
 async function retrievePurchases() {
-  const records = await retrievePurchasesRecords();
+  const purchases = await retrievePurchasesDb();
 
   const body = await Promise.all(
-    records.map(
-      async ({
-        _id,
-        provider_id,
-        date,
-        invoice_id,
-        concept,
-        net,
-        netPlusIva,
-        total,
-        extras,
-      }) => {
-        const providerParsed = await retrieveProviderRecordById(provider_id);
+    purchases.map(async (purchase) => {
+      const providerParsed = await retrieveProviderDbById(purchase.provider_id);
 
-        return {
-          _id,
-          provider: { name: providerParsed.name, _id: providerParsed._id },
-          date,
-          invoice_id,
-          concept,
-          net,
-          netPlusIva,
-          total,
-          extras,
-        };
-      }
-    )
+      return {
+        _id: purchase._id,
+        provider: providerParsed
+          ? { name: providerParsed.name, _id: providerParsed._id }
+          : { name: "Not found", _id: "Not found" },
+        date: purchase.date,
+        invoice_id: purchase.invoice_id,
+        concept: purchase.concept,
+        net: purchase.net,
+        netPlusIva: purchase.netPlusIva,
+        total: purchase.total,
+        extras: purchase.extras,
+      };
+    })
   );
 
-  if (records.length > 0) return { status: 200, body };
-  return { status: 404 };
+  return purchases.length
+    ? { status: 200, body }
+    : { status: 404, body: "Any purchases found" };
 }
 
 async function insertPurchases(body) {
@@ -58,7 +49,7 @@ async function insertPurchases(body) {
     extras,
   } = body;
 
-  const created = await insertPurchasesRecord(
+  const created = await insertPurchasesDb(
     provider_id,
     date,
     invoice_id,
@@ -76,8 +67,9 @@ async function insertPurchases(body) {
     invoice_id: created._id,
   });
 
-  if (created) return { status: 201, body: created };
-  return { status: 404 };
+  return created
+    ? { status: 201, body: created }
+    : { status: 500, body: "An error occurred" };
 }
 
 async function updatePurchases(id, data) {
@@ -92,17 +84,19 @@ async function updatePurchases(id, data) {
     extras: data.extras,
   };
 
-  const { nModified, ok } = await updatePurchasesRecord(id, newData);
+  const { nModified } = await updatePurchasesDb(id, newData);
 
-  if (ok) return { status: 200, body: { nModified, ok } };
-  return { status: 404 };
+  return nModified
+    ? { status: 200, body: "Updated successfully" }
+    : { status: 403, body: "Nothing to update" };
 }
 
 async function removePurchases(id) {
-  const removed = await removePurchasesRecord(id);
+  const removed = await removePurchasesDb(id);
 
-  if (removed !== null) return { status: 200 };
-  return { status: 404 };
+  return removed !== null
+    ? { status: 200, body: "Deleted successfully" }
+    : { status: 404, body: "Any record found" };
 }
 
 module.exports = {

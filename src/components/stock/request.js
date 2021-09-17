@@ -1,12 +1,12 @@
 const { oilSchema } = require("../../schema/oil");
 const { spareSchema } = require("../../schema/spare");
 
-async function retrieveStockRecords(type) {
+async function retrieveStockDb(type) {
   if (type === "oil") return oilSchema.find({ type });
   if (type === "spare") return spareSchema.find({ type });
 }
 
-async function insertStockRecord(itemParsed) {
+async function insertStockDb(itemParsed) {
   let created;
 
   if (itemParsed.type === "oil") created = await oilSchema.create(itemParsed);
@@ -16,7 +16,7 @@ async function insertStockRecord(itemParsed) {
   return created;
 }
 
-async function updateStockRecord(id, newData, type) {
+async function updateStockDb(id, newData, type) {
   if (type === "spare") return spareSchema.updateOne({ _id: id }, newData);
   if (type === "oil") return oilSchema.updateOne({ _id: id }, newData);
   if (type === "spareMovement") {
@@ -52,14 +52,14 @@ async function updateStockRecord(id, newData, type) {
   }
 }
 
-async function removeStockRecord(id, type) {
+async function removeStockDb(id, type) {
   if (type === "oil") return oilSchema.findByIdAndDelete(id);
   if (type === "spare") return spareSchema.findByIdAndDelete(id);
 }
 
 module.exports = {
-  retrieveStockRecords,
-  insertStockRecord,
-  updateStockRecord,
-  removeStockRecord,
+  retrieveStockDb,
+  insertStockDb,
+  updateStockDb,
+  removeStockDb,
 };

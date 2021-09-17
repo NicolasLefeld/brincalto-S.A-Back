@@ -17,9 +17,9 @@ const connectToDb = async () => {
   };
 
   try {
-    const dbs = await mongoose.connect(url, options);
+    const Db = await mongoose.connect(url, options);
   
-    if (dbs.connections[0].readyState === 1) {
+    if (Db.connections[0].readyState === 1) {
       console.log("🌴 Connected to MongoDB 🌴");
     }
   } catch (error) {

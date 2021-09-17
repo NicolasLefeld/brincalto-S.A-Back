@@ -2,38 +2,30 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const {
-  retrieveUsersRecords,
-  insertUserRecord,
-  updateUserRecord,
-  removeUserRecord,
+  retrieveUsersDb,
+  insertUserDb,
+  updateUserDb,
+  removeUserDb,
 } = require("./request");
 
 async function retrieveUsers() {
-  const records = await retrieveUsersRecords();
+  const users = await retrieveUsersDb();
 
-  const recordsMapped = records.map(({ role, email, _id }) => {
-    return { role, email, _id };
-  });
-
-  if (recordsMapped.length > 0) return { status: 200, body: recordsMapped };
-  return { status: 404, body: "Users not found" };
+  return users.length
+    ? { status: 200, body: users }
+    : { status: 404, body: "Any users found" };
 }
 
 async function insertUser({ email, password, role }) {
   const passwordHashed = bcrypt.hashSync(password, 8);
 
-  const { created, status } = await insertUserRecord(
-    email,
-    passwordHashed,
-    role
-  );
+  const { created, status } = await insertUserDb(email, passwordHashed, role);
 
-  if (created) return { status, body: created };
-  return { status: 500 };
+  return { status, body: created };
 }
 
 async function login({ email, password }) {
-  const userFound = await retrieveUsersRecords({ email });
+  const userFound = await retrieveUsersDb({ email });
 
   if (userFound.length === 0) return { status: 404, body: "User Not found" };
 
@@ -69,18 +61,20 @@ async function login({ email, password }) {
 
 async function updateUser(id, newData) {
   if (newData.password) newData.password = bcrypt.hashSync(newData.password, 8);
-  
-  const { nModified, ok } = await updateUserRecord(id, newData);
 
-  if (ok) return { status: 200, body: { nModified, ok } };
-  return { status: 404 };
+  const { nModified } = await updateUserDb(id, newData);
+
+  return nModified
+    ? { status: 200, body: "Updated successfully" }
+    : { status: 403, body: "Nothing to update" };
 }
 
 async function removeUser(id) {
-  const removed = await removeUserRecord(id);
+  const removed = await removeUserDb(id);
 
-  if (removed !== null) return { status: 200 };
-  return { status: 404 };
+  return removed !== null
+    ? { status: 200, body: "Deleted successfully" }
+    : { status: 404, body: "Any record found" };
 }
 
 module.exports = {

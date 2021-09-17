@@ -1,10 +1,10 @@
 const { purchaseSchema } = require("../../schema/purchase");
 
-async function retrievePurchasesRecords(filter = {}) {
+async function retrievePurchasesDb(filter = {}) {
   return purchaseSchema.find(filter);
 }
 
-async function insertPurchasesRecord(
+async function insertPurchasesDb(
   provider_id,
   date,
   invoice_id,
@@ -26,17 +26,17 @@ async function insertPurchasesRecord(
   });
 }
 
-async function updatePurchasesRecord(id, newData) {
+async function updatePurchasesDb(id, newData) {
   return purchaseSchema.updateOne({ _id: id }, newData);
 }
 
-async function removePurchasesRecord(id) {
+async function removePurchasesDb(id) {
   return purchaseSchema.findByIdAndDelete(id);
 }
 
 module.exports = {
-  retrievePurchasesRecords,
-  insertPurchasesRecord,
-  updatePurchasesRecord,
-  removePurchasesRecord,
+  retrievePurchasesDb,
+  insertPurchasesDb,
+  updatePurchasesDb,
+  removePurchasesDb,
 };
