@@ -12,6 +12,7 @@ async function insertClientDb(body) {
     contacto: body.contacto,
     assigned_products: body.assigned_products,
     sales: body.sales,
+    checking_account: body.checkingAccount
   });
 }
 

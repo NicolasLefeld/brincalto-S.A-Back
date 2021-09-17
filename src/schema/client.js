@@ -7,6 +7,7 @@ const clientSchema = new mongoose.Schema(
     address: String,
     contacto: String,
     assigned_products: [],
+    checking_account: Number,
     sales: [
       {
         concept: String,

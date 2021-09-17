@@ -11,6 +11,12 @@ async function retrieveClient() {
 
   const body = await Promise.all(
     clients.map(async (client) => {
+      let checkingAccountTotal = client.checking_account;
+
+      client.sales.forEach((sale) => {
+        checkingAccountTotal += parseFloat(sale.amount);
+      });
+
       return {
         _id: client._id,
         name: client.name,
@@ -18,6 +24,10 @@ async function retrieveClient() {
         address: client.address,
         contacto: client.contacto,
         sales: client.sales,
+        checkingAccount:
+          client.sales.length > 0
+            ? checkingAccountTotal
+            : client.checking_account,
         assigned_products: await Promise.all(
           client.assigned_products.map(
             async (product) => await retrieveProductDbById(product)

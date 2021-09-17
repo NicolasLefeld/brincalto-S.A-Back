@@ -8,25 +8,28 @@ const {
 
 async function retrieveSales() {
   const sales = await retrieveSalesDb();
-
+console.log(sales);
   const salesParsed = await Promise.all(
     sales.map(async (sale) => {
       if (sale.type === "A") {
         const client = await retrieveClientDb({ _id: sale.client_id });
-        
-        return {
-          _id: sale._id,
-          date: sale.date,
-          invoice_id: sale.invoice_id,
-          amount: sale.amount,
-          net: sale.net,
-          netPlusIva: sale.netPlusIva,
-          total: sale.total,
-          type: sale.type,
-          status: sale.status,
-          client_id: { name: client[0].name, _id: client[0]._id },
-          concept: sale.concept,
-        };
+
+        if (client[0]) {
+          return {
+            _id: sale._id,
+            date: sale.date,
+            invoice_id: sale.invoice_id,
+            amount: sale.amount,
+            net: sale.net,
+            netPlusIva: sale.netPlusIva,
+            total: sale.total,
+            type: sale.type,
+            status: sale.status,
+            client_id: { name: client[0].name, _id: client[0]._id },
+            concept: sale.concept,
+          };
+        }
+        return sale;
       }
     })
   );
