@@ -13,6 +13,7 @@ async function retrieveSales() {
     sales.map(async (sale) => {
       if (sale.type === "A") {
         const client = await retrieveClientDb({ _id: sale.client_id });
+        
         return {
           _id: sale._id,
           date: sale.date,
