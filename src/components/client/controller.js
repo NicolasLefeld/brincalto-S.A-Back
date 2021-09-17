@@ -18,7 +18,7 @@ async function retrieveClient() {
         address,
         contacto,
         assigned_products,
-        checkingAccount,
+        sales,
       }) => {
         return {
           _id,
@@ -31,7 +31,7 @@ async function retrieveClient() {
               async (product) => await retrieveProductRecordsById(product)
             )
           ),
-          checkingAccount,
+          sales,
         };
       }
     )
@@ -42,7 +42,7 @@ async function retrieveClient() {
 }
 
 async function insertClient(body) {
-  const { name, cuit, address, contacto, assigned_products, checkingAccount } =
+  const { name, cuit, address, contacto, assigned_products, sales } =
     body;
 
   const created = await insertClientRecord(
@@ -51,7 +51,7 @@ async function insertClient(body) {
     address,
     contacto,
     assigned_products,
-    checkingAccount
+    sales
   );
 
   if (created) return { status: 201, body: created };
@@ -65,7 +65,7 @@ async function updateClient(id, data) {
     address: data.address,
     contacto: data.contacto,
     assigned_products: data.assigned_products,
-    checkingAccount: data.checkingAccount,
+    sales: data.sales,
   };
 
   const { nModified, ok } = await updateClientRecord(id, newData);

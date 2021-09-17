@@ -6,8 +6,15 @@ const clientSchema = new mongoose.Schema(
     cuit: String,
     address: String,
     contacto: String,
-    checkingAccount: String,
     assigned_products: [],
+    sales: [
+      {
+        concept: String,
+        date: Date,
+        amount: Number,
+        invoice_id: String,
+      },
+    ],
   },
   { collection: "clients" }
 );

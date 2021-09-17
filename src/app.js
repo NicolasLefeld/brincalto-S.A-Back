@@ -15,6 +15,6 @@ app.use("/auth", require("./components/auth/router"));
 app.use("/product", require("./components/product/router"));
 app.use("/client", require("./components/client/router"));
 app.use("/purchases", require("./components/purchases/router"));
-
+app.use("/sale", require("./components/sale/router"));
 
 module.exports = app;
