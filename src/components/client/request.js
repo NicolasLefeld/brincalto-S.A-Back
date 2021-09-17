@@ -24,7 +24,7 @@ async function updateClientSales(id, invoiceData) {
     { _id: id },
     {
       $push: {
-        purchases: {
+        sales: {
           concept: invoiceData.comment,
           date: invoiceData.date,
           amount: invoiceData.amount,
