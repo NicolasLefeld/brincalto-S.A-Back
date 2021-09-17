@@ -1,4 +1,4 @@
-const { updateClientSales } = require("../clients/request");
+const { updateClientSales, retrieveClientDb } = require("../clients/request");
 const {
   retrieveSalesDb,
   insertSalesDb,
@@ -9,8 +9,29 @@ const {
 async function retrieveSales() {
   const sales = await retrieveSalesDb();
 
+  const salesParsed = await Promise.all(
+    sales.map(async (sale) => {
+      if (sale.type === "A") {
+        const client = await retrieveClientDb({ _id: sale.client_id });
+        return {
+          _id: sale._id,
+          date: sale.date,
+          invoice_id: sale.invoice_id,
+          amount: sale.amount,
+          net: sale.net,
+          netPlusIva: sale.netPlusIva,
+          total: sale.total,
+          type: sale.type,
+          status: sale.status,
+          client_id: { name: client[0].name, _id: client[0]._id },
+          concept: sale.concept,
+        };
+      }
+    })
+  );
+
   return sales.length
-    ? { status: 200, body: sales }
+    ? { status: 200, body: salesParsed }
     : { status: 404, body: "Any sale found" };
 }
 
