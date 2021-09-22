@@ -1,48 +1,64 @@
-const { saleSchema } = require("../../schema/sale");
+const { invoiceSchema } = require("../../schema/invoice");
+const { remitoSchema } = require("../../schema/remito");
 
-async function retrieveSalesDb(filter = {}) {
-  return saleSchema.find(filter);
+/* INVOICES */
+
+async function retrieveInvoicesDb(filter = {}) {
+  return invoiceSchema.find(filter);
 }
 
-async function insertSalesDb(
-  date,
-  invoice_id,
-  amount,
-  net,
-  netPlusIva,
-  total,
-  type,
-  status,
-  client_id,
-  concept
-) {
-  const created = await saleSchema.create({
-    date,
-    invoice_id,
-    amount,
-    net,
-    netPlusIva,
-    total,
-    type,
-    status,
-    client_id,
-    concept,
+async function insertInvoicesDb(body) {
+  const created = await invoiceSchema.create({
+    date: body.date,
+    invoice_id: body.invoice_id,
+    amount: body.amount,
+    net: body.net,
+    netPlusIva: body.netPlusIva,
+    total: body.total,
+    type: body.type,
+    status: body.status,
+    client_id: body.client_id,
+    concept: body.concept,
   });
 
   return created;
 }
 
-async function updateSalesDb(id, newData) {
-  return saleSchema.updateOne({ _id: id }, newData);
+async function updateInvoicesDb(id, newData) {
+  return invoiceSchema.updateOne({ _id: id }, newData);
 }
 
-async function removeSalesDb(id) {
-  return saleSchema.findByIdAndDelete(id);
+async function removeInvoicesDb(id) {
+  return invoiceSchema.findByIdAndDelete(id);
+}
+
+/* REMITOS */
+
+async function retrieveRemitosDb(filter = {}) {
+  return remitoSchema.find(filter);
+}
+
+async function insertRemitosDb(body) {
+  const created = await remitoSchema.create({});
+
+  return created;
+}
+
+async function updateRemitosDb(id, newData) {
+  return remitoSchema.updateOne({ _id: id }, newData);
+}
+
+async function removeRemitosDb(id) {
+  return remitoSchema.findByIdAndDelete(id);
 }
 
 module.exports = {
-  retrieveSalesDb,
-  insertSalesDb,
-  updateSalesDb,
-  removeSalesDb,
+  retrieveInvoicesDb,
+  insertInvoicesDb,
+  updateInvoicesDb,
+  removeInvoicesDb,
+  retrieveRemitosDb,
+  insertRemitosDb,
+  updateRemitosDb,
+  removeRemitosDb,
 };

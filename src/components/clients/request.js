@@ -24,16 +24,16 @@ async function removeClientDb(id) {
   return clientSchema.findByIdAndDelete(id);
 }
 
-async function updateClientSales(id, invoiceData) {
+async function updateClientInvoices(body) {
   return clientSchema.updateOne(
-    { _id: id },
+    { _id: body.clientId },
     {
       $push: {
         sales: {
-          concept: invoiceData.comment,
-          date: invoiceData.date,
-          amount: invoiceData.amount,
-          invoice_id: invoiceData.invoice_id,
+          concept: body.comment,
+          date: body.date,
+          amount: body.amount,
+          invoice_id: body.invoice_id,
         },
       },
     }
@@ -45,5 +45,5 @@ module.exports = {
   insertClientDb,
   updateClientDb,
   removeClientDb,
-  updateClientSales,
+  updateClientInvoices,
 };

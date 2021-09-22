@@ -1,26 +1,58 @@
 const router = require("express").Router();
 const {
-  retrieveSales,
-  insertSales,
-  updateSales,
-  removeSales,
+  retrieveInvoices,
+  insertInvoices,
+  updateInvoices,
+  removeInvoices,
 } = require("./controller");
 
 router
 
-  .get("/", async (req, res) => {
-    const { status, body } = await retrieveSales();
+  /* INVOICES */
+
+  .get("/invoices", async (req, res) => {
+    const { status, body } = await retrieveInvoices();
 
     res.status(status).json(body);
   })
 
-  .post("/", async (req, res) => {
+  .post("/invoices", async (req, res) => {
+    const { status, body } = await insertInvoices(req.body);
+
+    res.status(status).json(body);
+  })
+
+  .put("/invoices/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const { status, body } = await updateInvoices(id, req.body);
+
+    res.status(status).json(body);
+  })
+
+  .delete("/invoices/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const { status, body } = await removeInvoices(id);
+
+    res.status(status).json(body);
+  })
+
+  /* REMITOS */
+
+  .get("/remitos", async (req, res) => {
+    const { status, body } = await retrieveInvoices();
+
+    res.status(status).json(body);
+  })
+
+  .post("/remitos", async (req, res) => {
     const { status, body } = await insertSales(req.body);
 
     res.status(status).json(body);
   })
 
-  .put("/:id", async (req, res) => {
+  .put("/remitos/:id", async (req, res) => {
     const { id } = req.params;
 
     const { status, body } = await updateSales(id, req.body);
@@ -28,12 +60,12 @@ router
     res.status(status).json(body);
   })
 
-  .delete("/:id", async (req, res) => {
+  .delete("/remitos/:id", async (req, res) => {
     const { id } = req.params;
 
     const { status, body } = await removeSales(id);
 
     res.status(status).json(body);
-  });
+  })
 
 module.exports = router;
