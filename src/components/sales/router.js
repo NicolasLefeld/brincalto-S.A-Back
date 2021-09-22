@@ -4,6 +4,10 @@ const {
   insertInvoices,
   updateInvoices,
   removeInvoices,
+  retrieveRemitos,
+  insertRemitos,
+  updateRemitos,
+  removeRemitos,
 } = require("./controller");
 
 router
@@ -41,13 +45,13 @@ router
   /* REMITOS */
 
   .get("/remitos", async (req, res) => {
-    const { status, body } = await retrieveInvoices();
+    const { status, body } = await retrieveRemitos();
 
     res.status(status).json(body);
   })
 
   .post("/remitos", async (req, res) => {
-    const { status, body } = await insertSales(req.body);
+    const { status, body } = await insertRemitos(req.body);
 
     res.status(status).json(body);
   })
@@ -55,7 +59,7 @@ router
   .put("/remitos/:id", async (req, res) => {
     const { id } = req.params;
 
-    const { status, body } = await updateSales(id, req.body);
+    const { status, body } = await updateRemitos(id, req.body);
 
     res.status(status).json(body);
   })
@@ -63,7 +67,7 @@ router
   .delete("/remitos/:id", async (req, res) => {
     const { id } = req.params;
 
-    const { status, body } = await removeSales(id);
+    const { status, body } = await removeRemitos(id);
 
     res.status(status).json(body);
   })

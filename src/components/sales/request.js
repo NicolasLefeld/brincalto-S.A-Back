@@ -4,6 +4,8 @@ const { remitoSchema } = require("../../schema/remito");
 /* INVOICES */
 
 async function retrieveInvoicesDb(filter = {}) {
+  filter["$or"] = [{ type: "A" }, { type: "B" }];
+
   return invoiceSchema.find(filter);
 }
 
@@ -35,11 +37,23 @@ async function removeInvoicesDb(id) {
 /* REMITOS */
 
 async function retrieveRemitosDb(filter = {}) {
+  filter["$or"] = [{ type: "batea" }, { type: "chasis" }, { type: "ton" }];
+
   return remitoSchema.find(filter);
 }
 
 async function insertRemitosDb(body) {
-  const created = await remitoSchema.create({});
+  const created = await remitoSchema.create({
+    type: body.type,
+    client_id: body.client_id,
+    date: body.date,
+    remito_id: body.remito_id,
+    product_id: body.product_id,
+    observation: body.observation,
+    tons: body.tons,
+    price: body.price,
+    status: body.status,
+  });
 
   return created;
 }

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const invpiceSchema = new mongoose.Schema(
+const invoiceSchema = new mongoose.Schema(
   {
     type: { type: String, enum: ["A", "B"] },
     date: { type: Date, required: true },
@@ -16,4 +16,4 @@ const invpiceSchema = new mongoose.Schema(
   { collection: "sales" }
 );
 
-module.exports.invpiceSchema = mongoose.model("invpiceModel", invpiceSchema);
+module.exports.invoiceSchema = mongoose.model("invoiceModel", invoiceSchema);

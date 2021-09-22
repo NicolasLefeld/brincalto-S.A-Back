@@ -2,6 +2,7 @@ const {
   updateClientInvoices,
   retrieveClientDb,
 } = require("../clients/request");
+const { retrieveProductDb } = require("../products/request");
 const {
   retrieveInvoicesDb,
   insertInvoicesDb,
@@ -13,37 +14,38 @@ const {
   removeRemitosDb,
 } = require("./request");
 
+/* INVOICES */
+
 async function retrieveInvoices() {
-  const sales = await retrieveInvoicesDb();
+  const invoices = await retrieveInvoicesDb();
 
-  const salesParsed = await Promise.all(
-    sales.map(async (sale) => {
-      if (sale.type === "A") {
-        const client = await retrieveClientDb({ _id: sale.client_id });
+  const invoicesParsed = await Promise.all(
+    invoices.map(async (invoice) => {
+      const client = await retrieveClientDb({ _id: invoice.client_id });
 
-        if (client[0]) {
-          return {
-            _id: sale._id,
-            date: sale.date,
-            invoice_id: sale.invoice_id,
-            amount: sale.amount,
-            net: sale.net,
-            netPlusIva: sale.netPlusIva,
-            total: sale.total,
-            type: sale.type,
-            status: sale.status,
-            client_id: { name: client[0].name, _id: client[0]._id },
-            concept: sale.concept,
-          };
-        }
-        return sale;
+      if (client[0]) {
+        return {
+          _id: invoice._id,
+          date: invoice.date,
+          invoice_id: invoice.invoice_id,
+          amount: invoice.amount,
+          net: invoice.net,
+          netPlusIva: invoice.netPlusIva,
+          total: invoice.total,
+          type: invoice.type,
+          status: invoice.status,
+          client_id: { name: client[0].name, _id: client[0]._id },
+          concept: invoice.concept,
+        };
       }
+
+      return invoice;
     })
   );
 
-  return sales.length
-    ? { status: 200, body: salesParsed }
-    : { status: 404, body: "Any sale found" };
+  return invoices.length
+    ? { status: 200, body: invoicesParsed }
+    : { status: 404, body: "Any invoice found" };
 }
 
 async function insertInvoices(body) {
@@ -85,9 +87,83 @@ async function removeInvoices(id) {
     : { status: 404, body: "Any record found" };
 }
 
+/* REMITOS */
+
+async function retrieveRemitos() {
+  const remitos = await retrieveRemitosDb();
+
+  const remitosParsed = await Promise.all(
+    remitos.map(async (remito) => {
+      const product = await retrieveProductDb({ _id: remito.product_id });
+
+      if (product[0]) {
+        return {
+          type: remito.type,
+          client_id: remito.client,
+          date: remito.date,
+          remito_id: remito.remito_id,
+          product_id: product,
+          observation: remito.observation,
+          tons: remito.tons,
+          price: remito.price,
+          status: remito.status,
+        };
+      }
+
+      return remito;
+    })
+  );
+
+  return remitos.length
+    ? { status: 200, body: remitosParsed }
+    : { status: 404, body: "Any remito found" };
+}
+
+async function insertRemitos(body) {
+  const created = await insertRemitosDb(body);
+
+  if (created) {
+    //await updateClientRemitos(body);
+
+    return { status: 201, body: created };
+  }
+  return { status: 500, body: "An error occurred" };
+}
+
+async function updateRemitos(id, data) {
+  const newData = {
+    type: data.type,
+    client_id: data.client_id,
+    date: data.date,
+    remito_id: data.remito_id,
+    product_id: data.product_id,
+    observation: data.observation,
+    tons: data.tons,
+    price: data.price,
+    status: data.status,
+  };
+  const { nModified } = await updateRemitosDb(id, newData);
+
+  return nModified
+    ? { status: 200, body: "Updated successfully" }
+    : { status: 403, body: "Nothing to update" };
+}
+
+async function removeRemitos(id) {
+  const removed = await removeRemitosDb(id);
+
+  return removed !== null
+    ? { status: 200, body: "Deleted successfully" }
+    : { status: 404, body: "Any record found" };
+}
+
 module.exports = {
   retrieveInvoices,
   insertInvoices,
   updateInvoices,
   removeInvoices,
+  retrieveRemitos,
+  insertRemitos,
+  updateRemitos,
+  removeRemitos,
 };
