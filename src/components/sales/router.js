@@ -7,6 +7,7 @@ const {
   retrieveRemitos,
   insertRemitos,
   updateRemitos,
+  updateRemitoStatus,
   removeRemitos,
 } = require("./controller");
 
@@ -67,7 +68,7 @@ router
   .put("/remitos/markAsProcessed/:id", async (req, res) => {
     const { id } = req.params;
 
-    const { status, body } = await updateRemitos(id, req.body);
+    const { status, body } = await updateRemitoStatus(id, req.body);
 
     res.status(status).json(body);
   })

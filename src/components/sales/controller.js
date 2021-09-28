@@ -98,6 +98,7 @@ async function retrieveRemitos() {
 
       if (product[0]) {
         return {
+          _id: remito._id,
           type: remito.type,
           client_id: remito.client,
           date: remito.date,
@@ -149,6 +150,17 @@ async function updateRemitos(id, data) {
     : { status: 403, body: "Nothing to update" };
 }
 
+async function updateRemitoStatus(id, data) {
+  const newData = {
+    status: data.status,
+  };
+  const { nModified } = await updateRemitosDb(id, newData);
+
+  return nModified
+    ? { status: 200, body: "Updated successfully" }
+    : { status: 403, body: "Nothing to update" };
+}
+
 async function removeRemitos(id) {
   const removed = await removeRemitosDb(id);
 
@@ -165,5 +177,6 @@ module.exports = {
   retrieveRemitos,
   insertRemitos,
   updateRemitos,
+  updateRemitoStatus,
   removeRemitos,
 };
