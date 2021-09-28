@@ -64,6 +64,14 @@ router
     res.status(status).json(body);
   })
 
+  .put("/remitos/markAsProcessed/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const { status, body } = await updateRemitos(id, req.body);
+
+    res.status(status).json(body);
+  })
+
   .delete("/remitos/:id", async (req, res) => {
     const { id } = req.params;
 
