@@ -14,7 +14,6 @@ async function insertLog(date, description) {
   if (created) return true;
   return false;
 }
-console.log('lel');
 
 module.exports = {
   retrieveLog,

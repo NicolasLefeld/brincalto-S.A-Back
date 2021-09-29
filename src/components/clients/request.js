@@ -40,10 +40,15 @@ async function updateClientInvoices(body) {
   );
 }
 
+async function retrieveClientDbById(id) {
+  return clientSchema.findById(id);
+}
+
 module.exports = {
   retrieveClientDb,
   insertClientDb,
   updateClientDb,
   removeClientDb,
   updateClientInvoices,
+  retrieveClientDbById
 };

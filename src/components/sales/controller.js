@@ -1,6 +1,6 @@
 const {
   updateClientInvoices,
-  retrieveClientDb,
+  retrieveClientDbById,
 } = require("../clients/request");
 const { retrieveProductDb } = require("../products/request");
 const {
@@ -21,7 +21,7 @@ async function retrieveInvoices() {
 
   const invoicesParsed = await Promise.all(
     invoices.map(async (invoice) => {
-      const client = await retrieveClientDb({ _id: invoice.client_id });
+      const client = await retrieveClientDbById(invoice.client_id);
 
       if (client[0]) {
         return {
@@ -95,12 +95,13 @@ async function retrieveRemitos() {
   const remitosParsed = await Promise.all(
     remitos.map(async (remito) => {
       const product = await retrieveProductDb({ _id: remito.product_id });
+      const client = await retrieveClientDbById(remito.client_id);
 
       if (product[0]) {
         return {
           _id: remito._id,
           type: remito.type,
-          client_id: remito.client,
+          client_id: client,
           date: remito.date,
           remito_id: remito.remito_id,
           product_id: product,
