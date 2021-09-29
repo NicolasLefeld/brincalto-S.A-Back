@@ -13,7 +13,6 @@ async function insertInvoicesDb(body) {
   const created = await invoiceSchema.create({
     date: body.date,
     invoice_id: body.invoice_id,
-    amount: body.amount,
     net: body.net,
     netPlusIva: body.netPlusIva,
     total: body.total,

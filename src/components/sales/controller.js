@@ -28,7 +28,6 @@ async function retrieveInvoices() {
           _id: invoice._id,
           date: invoice.date,
           invoice_id: invoice.invoice_id,
-          amount: invoice.amount,
           net: invoice.net,
           netPlusIva: invoice.netPlusIva,
           total: invoice.total,
@@ -63,7 +62,6 @@ async function updateInvoices(id, data) {
   const newData = {
     date: data.date,
     invoice_id: data.invoice_id,
-    amount: data.amount,
     net: data.net,
     netPlusIva: data.netPlusIva,
     total: data.total,

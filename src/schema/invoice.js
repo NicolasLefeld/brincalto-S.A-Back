@@ -5,7 +5,6 @@ const invoiceSchema = new mongoose.Schema(
     type: { type: String, enum: ["A", "B"] },
     date: { type: Date, required: true },
     invoice_id: { type: String, required: true },
-    amount: { type: Number, required: true },
     net: { type: Number, required: false },
     netPlusIva: { type: Number, required: false },
     total: { type: Number, required: false },
