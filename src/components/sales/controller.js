@@ -1,3 +1,4 @@
+const { remitoSchema } = require("../../schema/remito");
 const {
   updateClientInvoices,
   retrieveClientDbById,
@@ -11,6 +12,7 @@ const {
   retrieveRemitosDb,
   insertRemitosDb,
   updateRemitosDb,
+  updateRemitosStatusDb,
   removeRemitosDb,
 } = require("./request");
 
@@ -23,7 +25,7 @@ async function retrieveInvoices() {
     invoices.map(async (invoice) => {
       const client = await retrieveClientDbById(invoice.client_id);
 
-      if (client[0]) {
+      if (client) {
         return {
           _id: invoice._id,
           date: invoice.date,
@@ -33,7 +35,7 @@ async function retrieveInvoices() {
           total: invoice.total,
           type: invoice.type,
           status: invoice.status,
-          client_id: { name: client[0].name, _id: client[0]._id },
+          client_id: client,
           concept: invoice.concept,
         };
       }
@@ -130,7 +132,7 @@ async function insertRemitos(body) {
   return { status: 500, body: "An error occurred" };
 }
 
-async function updateRemitos(id, data) {
+async function updateRemitos(data) {
   const newData = {
     type: data.type,
     client_id: data.client_id,
@@ -142,20 +144,23 @@ async function updateRemitos(id, data) {
     price: data.price,
     status: data.status,
   };
-  const { nModified } = await updateRemitosDb(id, newData);
+  const { nModified } = await updateRemitosDb(data.id, newData);
 
   return nModified
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }
 
-async function updateRemitoStatus(id, data) {
-  const newData = {
-    status: data.status,
-  };
-  const { nModified } = await updateRemitosDb(id, newData);
+async function updateRemitoStatus(data) {
+  const result = await Promise.all(
+    data.map((remitoId) => {
+      if (remitoId.match(/^[0-9a-fA-F]{24}$/)) {
+        return updateRemitosStatusDb(remitoId);
+      }
+    })
+  );
 
-  return nModified
+  return result.every((rs) => rs.nModified === 1)
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

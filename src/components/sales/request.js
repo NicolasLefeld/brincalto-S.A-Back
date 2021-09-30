@@ -61,6 +61,15 @@ async function updateRemitosDb(id, newData) {
   return remitoSchema.updateOne({ _id: id }, newData);
 }
 
+async function updateRemitosStatusDb(id) {
+  return remitoSchema.updateOne(
+    { _id: id },
+    {
+      status: "processed",
+    }
+  );
+}
+
 async function removeRemitosDb(id) {
   return remitoSchema.findByIdAndDelete(id);
 }
@@ -73,5 +82,6 @@ module.exports = {
   retrieveRemitosDb,
   insertRemitosDb,
   updateRemitosDb,
+  updateRemitosStatusDb,
   removeRemitosDb,
 };
