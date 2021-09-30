@@ -109,6 +109,7 @@ async function retrieveRemitos() {
           tons: remito.tons,
           price: remito.price,
           status: remito.status,
+          statusId: remito.statusId,
         };
       }
 
@@ -143,6 +144,7 @@ async function updateRemitos(data) {
     tons: data.tons,
     price: data.price,
     status: data.status,
+    statusId: data.statusId,
   };
   const { nModified } = await updateRemitosDb(data.id, newData);
 
@@ -152,11 +154,15 @@ async function updateRemitos(data) {
 }
 
 async function updateRemitoStatus(data) {
+  const lastsId = await retrieveRemitosDb({}, { statusId: 1, _id: 0 });
+  const lastsIdParsed = lastsId.map((ids) => (ids.statusId ? ids.statusId : 0));
+
+  const lastId = Math.max(...lastsIdParsed);
+  const lastIdPlusOne = lastId + 1;
+  
   const result = await Promise.all(
     data.map((remitoId) => {
-      if (remitoId.match(/^[0-9a-fA-F]{24}$/)) {
-        return updateRemitosStatusDb(remitoId);
-      }
+      return updateRemitosStatusDb(remitoId, lastIdPlusOne);
     })
   );
 

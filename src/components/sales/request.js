@@ -35,10 +35,10 @@ async function removeInvoicesDb(id) {
 
 /* REMITOS */
 
-async function retrieveRemitosDb(filter = {}) {
+async function retrieveRemitosDb(filter = {}, projection = '') {
   filter["$or"] = [{ type: "batea" }, { type: "chasis" }, { type: "ton" }];
 
-  return remitoSchema.find(filter);
+  return remitoSchema.find(filter, projection);
 }
 
 async function insertRemitosDb(body) {
@@ -61,11 +61,12 @@ async function updateRemitosDb(id, newData) {
   return remitoSchema.updateOne({ _id: id }, newData);
 }
 
-async function updateRemitosStatusDb(id) {
+async function updateRemitosStatusDb(id, statusId) {
   return remitoSchema.updateOne(
     { _id: id },
     {
       status: "processed",
+      statusId
     }
   );
 }
