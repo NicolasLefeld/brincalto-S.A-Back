@@ -28,7 +28,7 @@ async function retrieveClient() {
           client.sales.length > 0
             ? checkingAccountTotal
             : client.checking_account,
-        assigned_products: await Promise.all(
+        assignedProducts: await Promise.all(
           client.assigned_products.map(
             async (product) => await retrieveProductDbById(product)
           )
