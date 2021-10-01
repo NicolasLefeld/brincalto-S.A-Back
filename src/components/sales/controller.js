@@ -160,8 +160,6 @@ async function insertRemitos(body) {
   const created = await insertRemitosDb(body);
 
   if (created) {
-    //await updateClientRemitos(body);
-
     return { status: 201, body: created };
   }
   return { status: 500, body: "An error occurred" };
