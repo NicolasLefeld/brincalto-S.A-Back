@@ -1,7 +1,9 @@
+const numberWithCommas = require('./numberWithCommas')
+
 function generateHtml(remitosInfo) {
   console.log(remitosInfo);
   const client = remitosInfo[0].client_id.name;
-
+  const id = remitosInfo[0].statusId;
   const monthNames = [
     "Enero",
     "Febrero",
@@ -25,7 +27,7 @@ function generateHtml(remitosInfo) {
     const month = remitoInfo.date.getUTCMonth() + 1; //months from 1-12
     const day = remitoInfo.date.getUTCDate();
     const year = remitoInfo.date.getUTCFullYear();
-    
+
     tableContent += `
     <tr>
       <td class="tr5 td9"><p class="p12 ft10">${day}/${month}/${year}</p></td>
@@ -616,6 +618,9 @@ function generateHtml(remitosInfo) {
             <p class="p0 ft0">BRINCALTO S.A</p>
           </div>
           <div id="id1_1_2">
+          <p class="p0 ft2">
+              <span class="ft1">Liquidación N°:</span> ${id}
+            </p>
             <p class="p0 ft2">
               <span class="ft1">Razón Social:</span> ${client}
             </p>
@@ -664,7 +669,7 @@ function generateHtml(remitosInfo) {
   
           <table cellpadding="0" cellspacing="0" class="t1">
             <tr>
-              <td class="tr7 td24"><p class="p21 ft6">TOTAL $ ${total}</p></td>
+              <td class="tr7 td24"><p class="p21 ft6">TOTAL $ ${numberWithCommas(total)}</p></td>
             </tr>
           </table>
         </div>
