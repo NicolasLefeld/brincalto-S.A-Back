@@ -41,6 +41,12 @@ async function retrieveRemitosDb(filter = {}, projection = '') {
   return remitoSchema.find(filter, projection);
 }
 
+async function retrieveRemitosByIdDb(filter = {}, projection = '') {
+  filter["$or"] = [{ type: "batea" }, { type: "chasis" }, { type: "ton" }];
+
+  return remitoSchema.findById(filter, projection);
+}
+
 async function insertRemitosDb(body) {
   const created = await remitoSchema.create({
     type: body.type,
@@ -81,6 +87,7 @@ module.exports = {
   updateInvoicesDb,
   removeInvoicesDb,
   retrieveRemitosDb,
+  retrieveRemitosByIdDb,
   insertRemitosDb,
   updateRemitosDb,
   updateRemitosStatusDb,

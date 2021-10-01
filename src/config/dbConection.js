@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOSTNAME, MONGO_DB_NAME, MONGO_PORT } =
   process.env;
 mongoose.Promise = global.Promise;
-mongoose.set("debug", true); // Will add the Mongo actions on the console
+mongoose.set("debug", false); // Will add the Mongo actions on the console
 mongoose.set("useFindAndModify", false);
 
 const connectToDb = async () => {

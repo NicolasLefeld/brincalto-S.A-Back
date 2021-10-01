@@ -1,15 +1,19 @@
-const { remitoSchema } = require("../../schema/remito");
+const generateHtml = require("../../util/generateHtml");
 const {
   updateClientInvoices,
   retrieveClientDbById,
 } = require("../clients/request");
-const { retrieveProductDb } = require("../products/request");
+const {
+  retrieveProductDb,
+  retrieveProductDbById,
+} = require("../products/request");
 const {
   retrieveInvoicesDb,
   insertInvoicesDb,
   updateInvoicesDb,
   removeInvoicesDb,
   retrieveRemitosDb,
+  retrieveRemitosByIdDb,
   insertRemitosDb,
   updateRemitosDb,
   updateRemitosStatusDb,
@@ -122,6 +126,36 @@ async function retrieveRemitos() {
     : { status: 404, body: "Any remito found" };
 }
 
+async function generatePdf(remitos_id) {
+  const remitosInfo = await Promise.all(
+    remitos_id.map(async (remito_id) => {
+      const remito = await retrieveRemitosByIdDb(remito_id);
+      const client = await retrieveClientDbById(remito.client_id);
+      const product = await retrieveProductDbById(remito.product_id);
+
+      return {
+        _id: remito._id,
+        type: remito.type,
+        client_id: client,
+        date: remito.date,
+        remito_id: remito.remito_id,
+        product_id: product,
+        observation: remito.observation,
+        tons: remito.tons,
+        price: remito.price,
+        status: remito.status,
+        statusId: remito.statusId,
+      };
+    })
+  );
+
+  const htmlForPdf = generateHtml(remitosInfo);
+
+  return htmlForPdf.length
+    ? { status: 200, body: htmlForPdf }
+    : { status: 404, body: "Any remito found" };
+}
+
 async function insertRemitos(body) {
   const created = await insertRemitosDb(body);
 
@@ -159,7 +193,7 @@ async function updateRemitoStatus(data) {
 
   const lastId = Math.max(...lastsIdParsed);
   const lastIdPlusOne = lastId + 1;
-  
+
   const result = await Promise.all(
     data.map((remitoId) => {
       return updateRemitosStatusDb(remitoId, lastIdPlusOne);
@@ -185,6 +219,7 @@ module.exports = {
   updateInvoices,
   removeInvoices,
   retrieveRemitos,
+  generatePdf,
   insertRemitos,
   updateRemitos,
   updateRemitoStatus,

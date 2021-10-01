@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const {
   retrieveInvoices,
+  generatePdf,
   insertInvoices,
   updateInvoices,
   removeInvoices,
@@ -49,6 +50,12 @@ router
     const { status, body } = await retrieveRemitos();
 
     res.status(status).json(body);
+  })
+
+  .get("/remitos/getPdf", async (req, res) => {
+    const { status, body } = await generatePdf(req.body);
+
+    res.send(body);
   })
 
   .post("/remitos", async (req, res) => {
