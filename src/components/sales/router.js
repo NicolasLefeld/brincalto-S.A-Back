@@ -52,7 +52,7 @@ router
     res.status(status).json(body);
   })
 
-  .get("/remitos/getPdf", async (req, res) => {
+  .post("/remitos/getPdf", async (req, res) => {
     const { status, body } = await generatePdf(req.body);
 
     res.send(body);
@@ -82,6 +82,6 @@ router
     const { status, body } = await removeRemitos(id);
 
     res.status(status).json(body);
-  })
+  });
 
 module.exports = router;
