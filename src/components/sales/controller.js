@@ -152,7 +152,7 @@ async function generatePdf(remitos_id) {
 
   const html = generateHtml(remitosInfo);
   const pdf = await generatePdfWithHtml(html)
-console.log(pdf);
+
   return pdf
 }
 

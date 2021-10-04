@@ -4,14 +4,21 @@ const cors = require("cors");
 
 const app = express();
 
-var whitelist = ["https://brincalto-front.herokuapp.com/", "https://brincalto-front.herokuapp.com", undefined];
-var corsOptions = {
+const whitelist = [
+  "https://brincalto-front.herokuapp.com/",
+  "https://brincalto-front.herokuapp.com"
+];
+const corsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
+    if (process.env.NODE_ENV === "production") {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log("ORIGIN: ", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
     } else {
-      console.log("ORIGIN: ", origin);
-      callback(new Error("Not allowed by CORS"));
+      callback(null, true);
     }
   },
 };
