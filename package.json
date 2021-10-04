@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Project for Brincalto S.A",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node src/app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NicolasLefeld/brincalto-S.A.git"
