@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const app = express();
 
-var whitelist = ["https://brincalto-front.herokuapp.com/"];
+var whitelist = ["https://brincalto-front.herokuapp.com/", "https://brincalto-front.herokuapp.com"];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
