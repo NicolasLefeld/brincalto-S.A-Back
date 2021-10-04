@@ -53,9 +53,10 @@ router
   })
 
   .post("/remitos/getPdf", async (req, res) => {
-    const { status, body } = await generatePdf(req.body);
-
-    res.send(body);
+    const buffer = await generatePdf(req.body);
+console.log(buffer);
+    res.write(buffer,'binary');
+    res.end(null, 'binary');
   })
 
   .post("/remitos", async (req, res) => {

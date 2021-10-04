@@ -1,7 +1,6 @@
 const numberWithCommas = require('./numberWithCommas')
 
 function generateHtml(remitosInfo) {
-  console.log(remitosInfo);
   const client = remitosInfo[0].client_id.name;
   const id = remitosInfo[0].statusId;
   const monthNames = [

@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "express-joi-validation": "^5.0.0",
     "express-validator": "^6.12.2",
+    "html-pdf-node": "^1.0.7",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.2",

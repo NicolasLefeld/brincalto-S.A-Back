@@ -1,4 +1,5 @@
 const generateHtml = require("../../util/generateHtml");
+const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const {
   updateClientInvoices,
   retrieveClientDbById,
@@ -149,11 +150,10 @@ async function generatePdf(remitos_id) {
     })
   );
 
-  const htmlForPdf = generateHtml(remitosInfo);
-
-  return htmlForPdf.length
-    ? { status: 200, body: htmlForPdf }
-    : { status: 404, body: "Any remito found" };
+  const html = generateHtml(remitosInfo);
+  const pdf = await generatePdfWithHtml(html)
+console.log(pdf);
+  return pdf
 }
 
 async function insertRemitos(body) {
