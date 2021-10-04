@@ -1,16 +1,17 @@
 const dayjs = require("dayjs");
 const {
-  retrieveStockRecords,
-  insertStockRecord,
-  updateStockRecord,
-  removeStockRecord,
+  retrieveStockDb,
+  insertStockDb,
+  updateStockDb,
+  removeStockDb,
 } = require("./request");
 
 async function retrieveStock(type) {
-  const records = await retrieveStockRecords(type);
+  const stock = await retrieveStockDb(type);
 
-  if (records.length > 0) return { status: 200, body: records };
-  return { status: 404 };
+  return stock.length
+    ? { status: 200, body: stock }
+    : { status: 404, body: "Any stock found" };
 }
 
 async function insertStock(item) {
@@ -41,15 +42,16 @@ async function insertStock(item) {
     };
   }
 
-  const created = await insertStockRecord(itemParsed);
+  const created = await insertStockDb(itemParsed);
 
-  if (created) return { status: 201, body: created };
-  return { status: 500 };
+  return created
+    ? { status: 201, body: created }
+    : { status: 500, body: "An error occurred" };
 }
 
 async function updateStock(id, type, newData) {
   let newDataParsed;
-  
+
   if (type === "spare") {
     newDataParsed = {
       quantity: newData.quantity,
@@ -77,17 +79,19 @@ async function updateStock(id, type, newData) {
     };
   }
 
-  const { nModified, ok } = await updateStockRecord(id, newDataParsed, type);
+  const { nModified } = await updateStockDb(id, newDataParsed, type);
 
-  if (nModified) return { status: 200, body: { nModified, ok } };
-  return { status: 200 };
+  return nModified
+    ? { status: 200, body: "Updated successfully" }
+    : { status: 403, body: "Nothing to update" };
 }
 
 async function removeStock(id, type) {
-  const removed = await removeStockRecord(id, type);
+  const removed = await removeStockDb(id, type);
 
-  if (removed !== null) return { status: 200 };
-  return { status: 404 };
+  return removed !== null
+    ? { status: 200, body: "Deleted successfully" }
+    : { status: 404, body: "Any record found" };
 }
 
 module.exports = {

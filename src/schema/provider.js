@@ -3,10 +3,18 @@ const mongoose = require("mongoose");
 const providerSchema = new mongoose.Schema(
   {
     name: String,
-    checking_account: Number,
     comment: String,
     cuit: String,
     address: String,
+    checkingAccount: Number,
+    purchases: [
+      {
+        concept: String,
+        date: Date,
+        amount: Number,
+        invoice_id: String,
+      },
+    ],
   },
   { collection: "providers" }
 );

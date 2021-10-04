@@ -1,15 +1,15 @@
 const { logSchema } = require('../../schema/log');
 
-async function retrieveLogRecords(filter = {}) {
+async function retrieveLogDb(filter = {}) {
   return logSchema.find(filter);
 }
 
-async function insertLogRecord(date, description) {
+async function insertLogDb(date, description) {
   const created = await logSchema.create({ date, description });
 
   return created;
 }
 
 module.exports = {
-  retrieveLogRecords, insertLogRecord,
+  retrieveLogDb, insertLogDb,
 };

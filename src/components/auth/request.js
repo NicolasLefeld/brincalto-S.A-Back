@@ -1,10 +1,10 @@
 const { userSchema } = require("../../schema/user");
 
-async function retrieveUsersRecords(filter = {}) {
+async function retrieveUsersDb(filter = {}) {
   return userSchema.find(filter);
 }
 
-async function insertUserRecord(email, password, role) {
+async function insertUserDb(email, password, role) {
   const user = await userSchema.find({ email });
 
   if (user.length) return { created: "User already exist", status: 200 };
@@ -18,17 +18,17 @@ async function insertUserRecord(email, password, role) {
   return { created: "User created successfully", status: 201 };
 }
 
-async function updateUserRecord(id, newData) {
+async function updateUserDb(id, newData) {
   return userSchema.updateOne({ _id: id }, newData);
 }
 
-async function removeUserRecord(id) {
+async function removeUserDb(id) {
   return userSchema.findByIdAndDelete(id);
 }
 
 module.exports = {
-  retrieveUsersRecords,
-  insertUserRecord,
-  updateUserRecord,
-  removeUserRecord
+  retrieveUsersDb,
+  insertUserDb,
+  updateUserDb,
+  removeUserDb
 };

@@ -1,21 +1,21 @@
-const {
-  retrieveLogRecords, insertLogRecord,
-} = require('./request');
+const { retrieveLogDb, insertLogDb } = require("./request");
 
 async function retrieveLog() {
-  const records = await retrieveLogRecords();
+  const logs = await retrieveLogDb();
 
-  if (records.length > 0) return { status: 200, body: records };
-  return { status: 404 };
+  return logs.length
+    ? { status: 200, body: logs }
+    : { status: 404, body: "Any logs found" };
 }
 
 async function insertLog(date, description) {
-  const created = await insertLogRecord(date, description);
+  const created = await insertLogDb(date, description);
 
-  if (created) return { status: 201, body: created };
-  return { status: 404 };
+  if (created) return true;
+  return false;
 }
 
 module.exports = {
-  retrieveLog, insertLog,
+  retrieveLog,
+  insertLog,
 };

@@ -10,9 +10,12 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.send("home"));
 app.use("/stock", require("./components/stock/router"));
-app.use("/provider", require("./components/provider/router"));
+app.use("/providers", require("./components/providers/router"));
 app.use("/auth", require("./components/auth/router"));
-app.use("/product", require("./components/product/router"));
-
+app.use("/products", require("./components/products/router"));
+app.use("/clients", require("./components/clients/router"));
+app.use("/purchases", require("./components/purchases/router"));
+app.use("/sales", require("./components/sales/router"));
+app.use("/logs", require("./components/log/router"));
 
 module.exports = app;
