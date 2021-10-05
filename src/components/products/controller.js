@@ -26,9 +26,9 @@ async function updateProduct(id, data) {
     name: data.name,
   };
 
-  const { nModified } = await updateProductDb(id, newData);
+  const { modifiedCount } = await updateProductDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

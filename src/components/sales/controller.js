@@ -77,9 +77,9 @@ async function updateInvoices(id, data) {
     client_id: data.client_id,
     concept: data.concept,
   };
-  const { nModified } = await updateInvoicesDb(id, newData);
+  const { modifiedCount } = await updateInvoicesDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }
@@ -178,9 +178,9 @@ async function updateRemitos(data) {
     status: data.status,
     statusId: data.statusId,
   };
-  const { nModified } = await updateRemitosDb(data.id, newData);
+  const { modifiedCount } = await updateRemitosDb(data.id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }
@@ -198,7 +198,7 @@ async function updateRemitoStatus(data) {
     })
   );
 
-  return result.every((rs) => rs.nModified === 1)
+  return result.every((rs) => rs.modifiedCount === 1)
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

@@ -1,21 +1,16 @@
 const mongoose = require("mongoose");
 
-
-const {
-  MONGO_USERNAME,
-  MONGO_PASSWORD,
-  MONGO_HOSTNAME,
-  MONGO_DB_NAME,
-} = process.env;
+const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOSTNAME, MONGO_DB_NAME } =
+  process.env;
 mongoose.Promise = global.Promise;
-mongoose.set("debug", false); // Will add the Mongo actions on the console
+mongoose.set("debug", process.env.ENV === "production" ? false : true);
 
 const connectToDb = async () => {
   const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}/${MONGO_DB_NAME}?retryWrites=true&w=majority`;
-  
+
   const options = {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   };
 
   try {

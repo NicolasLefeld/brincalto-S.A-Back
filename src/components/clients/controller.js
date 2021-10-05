@@ -60,9 +60,9 @@ async function updateClient(id, data) {
     sales: data.sales,
   };
 
-  const { nModified } = await updateClientDb(id, newData);
+  const { modifiedCount } = await updateClientDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

@@ -84,9 +84,9 @@ async function updatePurchases(id, data) {
     extras: data.extras,
   };
 
-  const { nModified } = await updatePurchasesDb(id, newData);
+  const { modifiedCount } = await updatePurchasesDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

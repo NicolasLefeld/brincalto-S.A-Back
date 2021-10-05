@@ -51,9 +51,9 @@ async function updateProvider(id, data) {
     cuit: data.cuit,
     address: data.address,
   };
-  const { nModified } = await updateProviderDb(id, newData);
+  const { modifiedCount } = await updateProviderDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }

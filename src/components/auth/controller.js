@@ -62,9 +62,9 @@ async function login({ email, password }) {
 async function updateUser(id, newData) {
   if (newData.password) newData.password = bcrypt.hashSync(newData.password, 8);
 
-  const { nModified } = await updateUserDb(id, newData);
+  const { modifiedCount } = await updateUserDb(id, newData);
 
-  return nModified
+  return modifiedCount
     ? { status: 200, body: "Updated successfully" }
     : { status: 403, body: "Nothing to update" };
 }
