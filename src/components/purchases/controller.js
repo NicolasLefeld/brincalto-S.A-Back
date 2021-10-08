@@ -28,6 +28,7 @@ async function retrievePurchases() {
         netPlusIva: purchase.netPlusIva,
         total: purchase.total,
         extras: purchase.extras,
+        status: purchase.status,
       };
     })
   );
@@ -62,6 +63,7 @@ async function updatePurchases(id, data) {
     netPlusIva: data.netPlusIva,
     total: data.total,
     extras: data.extras,
+    status: data.status,
   };
 
   const { modifiedCount } = await updatePurchasesDb(id, newData);
