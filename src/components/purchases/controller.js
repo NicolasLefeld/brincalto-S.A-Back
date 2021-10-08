@@ -42,9 +42,9 @@ async function insertPurchases(body) {
   const created = await insertPurchasesDb(body);
 
   await updateProviderpurchases(body.provider_id, {
-    concept: concept,
-    date: date,
-    amount: total,
+    concept: body.concept,
+    date: body.date,
+    amount: body.total,
     invoice_id: created._id,
   });
 
