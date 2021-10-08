@@ -30,7 +30,7 @@ async function updateProduct(id, data) {
 
   return modifiedCount
     ? { status: 200, body: "Updated successfully" }
-    : { status: 403, body: "Nothing to update" };
+    : { status: 404, body: "Nothing to update" };
 }
 
 async function removeProduct(id) {

@@ -81,7 +81,7 @@ async function updateInvoices(id, data) {
 
   return modifiedCount
     ? { status: 200, body: "Updated successfully" }
-    : { status: 403, body: "Nothing to update" };
+    : { status: 404, body: "Nothing to update" };
 }
 
 async function removeInvoices(id) {
@@ -182,7 +182,7 @@ async function updateRemitos(data) {
 
   return modifiedCount
     ? { status: 200, body: "Updated successfully" }
-    : { status: 403, body: "Nothing to update" };
+    : { status: 404, body: "Nothing to update" };
 }
 
 async function updateRemitoStatus(data) {
@@ -200,7 +200,7 @@ async function updateRemitoStatus(data) {
 
   return result.every((rs) => rs.modifiedCount === 1)
     ? { status: 200, body: "Updated successfully" }
-    : { status: 403, body: "Nothing to update" };
+    : { status: 404, body: "Nothing to update" };
 }
 
 async function removeRemitos(id) {
