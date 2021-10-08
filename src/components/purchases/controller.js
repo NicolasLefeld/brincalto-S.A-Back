@@ -41,7 +41,7 @@ async function retrievePurchases() {
 async function insertPurchases(body) {
   const created = await insertPurchasesDb(body);
 
-  await updateProviderpurchases(provider_id, {
+  await updateProviderpurchases(body.provider_id, {
     concept: concept,
     date: date,
     amount: total,
