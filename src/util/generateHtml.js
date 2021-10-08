@@ -1,4 +1,4 @@
-const numberWithCommas = require('./numberWithCommas')
+const numberWithCommas = require("./numberWithCommas");
 
 function generateHtml(remitosInfo) {
   const client = remitosInfo[0].client_id.name;
@@ -31,10 +31,18 @@ function generateHtml(remitosInfo) {
     <tr>
       <td class="tr5 td9"><p class="p12 ft10">${day}/${month}/${year}</p></td>
       <td class="tr5 td10"><p class="p13 ft10">${remitoInfo.remito_id}</p></td>
-      <td class="tr5 td10"><p class="p13 ft10">${remitoInfo.product_id.name}</p></td>
-      <td class="tr5 td11"><p class="p13 ft10">${remitoInfo.tons}</p></td>
+      <td class="tr5 td10"><p class="p13 ft10">${
+        remitoInfo.product_id.name
+      }</p></td>
+      ${
+        remitosInfo[0].tons
+          ? '<td class="tr5 td11"><p class="p13 ft10">${remitoInfo.tons}</p></td>'
+          : ""
+      }
       <td class="tr5 td11"><p class="p13 ft10">${remitoInfo.price}</p></td>
-      <td class="tr5 td15"><p class="p16 ft10">${remitoInfo.observation}</p></td>
+      <td class="tr5 td15"><p class="p16 ft10">${
+        remitoInfo.observation
+      }</p></td>
     </tr>`;
 
     total += remitoInfo.price;
@@ -645,9 +653,11 @@ function generateHtml(remitosInfo) {
               <td class="tr0 td0"><p class="p3 ft6">FECHA</p></td>
               <td class="tr0 td1"><p class="p4 ft6">REMITO</p></td>
               <td class="tr0 td1"><p class="p5 ft6">MATERIAL</p></td>
-              <td class="tr0 td2">
-                <p class="p6 ft6">METROS<span class="ft7">3</span></p>
-              </td>
+              ${
+                remitosInfo[0].tons
+                  ? '<td class="tr0 td2"><p class="p6 ft6">METROS<span class="ft7">3</span></p></td>'
+                  : ""
+              }
               <td class="tr0 td5">
                 <p class="p9 ft6">PRECIO TOTAL</p>
               </td>
@@ -660,15 +670,21 @@ function generateHtml(remitosInfo) {
               <td class="tr4 td10"><p class="p7 ft11">&nbsp;</p></td>
               <td class="tr4 td10"><p class="p7 ft11">&nbsp;</p></td>
               <td class="tr4 td11"><p class="p7 ft11">&nbsp;</p></td>
+              ${
+                remitosInfo[0].tons
+                  ? '<td class="tr4 td13"><p class="p7 ft11">&nbsp;</p></td>'
+                  : ""
+              }
               <td class="tr4 td13"><p class="p7 ft11">&nbsp;</p></td>
-              <td class="tr4 td14"><p class="p7 ft11">&nbsp;</p></td>
             </tr>
             ${tableContent}
           </table>
   
           <table cellpadding="0" cellspacing="0" class="t1">
             <tr>
-              <td class="tr7 td24"><p class="p21 ft6">TOTAL $ ${numberWithCommas(total)}</p></td>
+              <td class="tr7 td24"><p class="p21 ft6">TOTAL $ ${numberWithCommas(
+                total
+              )}</p></td>
             </tr>
           </table>
         </div>
