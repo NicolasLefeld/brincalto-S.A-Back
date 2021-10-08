@@ -4,25 +4,17 @@ async function retrievePurchasesDb(filter = {}) {
   return purchaseSchema.find(filter);
 }
 
-async function insertPurchasesDb(
-  provider_id,
-  date,
-  invoice_id,
-  concept,
-  net,
-  netPlusIva,
-  total,
-  extras
-) {
+async function insertPurchasesDb(body) {
   return await purchaseSchema.create({
-    provider_id,
-    date,
-    invoice_id,
-    concept,
-    net,
-    netPlusIva,
-    total,
-    extras,
+    provider_id: body.provider_id,
+    date: body.date,
+    invoice_id: body.invoice_id,
+    concept: body.concept,
+    net: body.net,
+    netPlusIva: body.netPlusIva,
+    total: body.total,
+    extras: body.extras,
+    status: body.status,
   });
 }
 

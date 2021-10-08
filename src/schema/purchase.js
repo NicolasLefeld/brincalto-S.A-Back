@@ -9,6 +9,7 @@ const purchaseSchema = new mongoose.Schema(
     net: Number,
     netPlusIva: Number,
     total: Number,
+    status: { type: String, enum: ["pending", "paid"], required: true },
     extras: [
       {
         concepto: String,

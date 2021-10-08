@@ -38,27 +38,7 @@ async function retrievePurchases() {
 }
 
 async function insertPurchases(body) {
-  const {
-    provider_id,
-    date,
-    invoice_id,
-    concept,
-    net,
-    netPlusIva,
-    total,
-    extras,
-  } = body;
-
-  const created = await insertPurchasesDb(
-    provider_id,
-    date,
-    invoice_id,
-    concept,
-    net,
-    netPlusIva,
-    total,
-    extras
-  );
+  const created = await insertPurchasesDb(body);
 
   await updateProviderpurchases(provider_id, {
     concept: concept,
