@@ -6,7 +6,11 @@ const {
 } = require("./request");
 
 async function retrieveProduct() {
-  const product = await retrieveProductDb();
+  const projection = {
+    _id: 1,
+    name: 1,
+  };
+  const product = await retrieveProductDb({}, projection);
 
   return product.length
     ? { status: 200, body: product }

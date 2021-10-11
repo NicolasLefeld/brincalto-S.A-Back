@@ -41,8 +41,8 @@ async function updateProviderpurchases(id, invoiceData) {
   );
 }
 
-async function retrieveProviderDbById(id) {
-  return providerSchema.findById(id);
+async function retrieveProviderDbById(id, projection = "") {
+  return providerSchema.findById(id, projection);
 }
 
 module.exports = {

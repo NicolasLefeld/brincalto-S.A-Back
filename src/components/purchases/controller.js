@@ -14,13 +14,19 @@ async function retrievePurchases() {
 
   const body = await Promise.all(
     purchases.map(async (purchase) => {
-      const providerParsed = await retrieveProviderDbById(purchase.provider_id);
+      const projection = {
+        name: 1,
+        _id: 1,
+      };
+      
+      const provider = await retrieveProviderDbById(
+        purchase.provider_id,
+        projection
+      );
 
       return {
         _id: purchase._id,
-        provider: providerParsed
-          ? { name: providerParsed.name, _id: providerParsed._id }
-          : { name: "Not found", _id: "Not found" },
+        provider,
         date: purchase.date,
         invoice_id: purchase.invoice_id,
         concept: purchase.concept,

@@ -6,7 +6,6 @@ const { retrieveCheckDbById } = require("../check/request");
 const {
   retrieveChargesDb,
   insertChargesDb,
-  updateChargesDb,
   removeChargesDb,
 } = require("./request");
 

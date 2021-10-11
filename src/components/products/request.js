@@ -1,7 +1,7 @@
 const { productSchema } = require("../../schema/product");
 
-async function retrieveProductDb(filter = {}) {
-  return productSchema.find(filter);
+async function retrieveProductDb(filter = {}, projection = "") {
+  return productSchema.find(filter, projection);
 }
 
 async function insertProductDb(name) {
@@ -29,5 +29,5 @@ module.exports = {
   insertProductDb,
   updateProductDb,
   removeProductDb,
-  retrieveProductDbById
+  retrieveProductDbById,
 };

@@ -1,13 +1,13 @@
 const { userSchema } = require("../../schema/user");
 
-async function retrieveUsersDb(filter = {}) {
-  return userSchema.find(filter);
+async function retrieveUsersDb(filter = {}, projection = "") {
+  return userSchema.find(filter, projection);
 }
 
 async function insertUserDb(email, password, role) {
   const user = await userSchema.find({ email });
 
-  if (user.length) return { created: "User already exist", status: 200 };
+  if (user.length) return false;
 
   const created = await userSchema.create({
     email,
@@ -15,7 +15,7 @@ async function insertUserDb(email, password, role) {
     role,
   });
 
-  return { created: "User created successfully", status: 201 };
+  return true;
 }
 
 async function updateUserDb(id, newData) {

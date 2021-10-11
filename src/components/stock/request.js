@@ -1,9 +1,9 @@
 const { oilSchema } = require("../../schema/oil");
 const { spareSchema } = require("../../schema/spare");
 
-async function retrieveStockDb(type) {
-  if (type === "oil") return oilSchema.find({ type });
-  if (type === "spare") return spareSchema.find({ type });
+async function retrieveStockDb(type, projection = { __v: 0 }) {
+  if (type === "oil") return oilSchema.find({ type }, projection);
+  if (type === "spare") return spareSchema.find({ type }, projection);
 }
 
 async function insertStockDb(itemParsed) {

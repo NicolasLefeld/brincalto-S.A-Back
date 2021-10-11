@@ -28,7 +28,12 @@ async function retrieveInvoices() {
 
   const invoicesParsed = await Promise.all(
     invoices.map(async (invoice) => {
-      const client = await retrieveClientDbById(invoice.client_id);
+      const projection = {
+        _id: 1,
+        name: 1,
+      };
+
+      const client = await retrieveClientDbById(invoice.client_id, projection);
 
       if (client) {
         return {
@@ -77,6 +82,7 @@ async function updateInvoices(id, data) {
     client_id: data.client_id,
     concept: data.concept,
   };
+
   const { modifiedCount } = await updateInvoicesDb(id, newData);
 
   return modifiedCount
@@ -99,8 +105,23 @@ async function retrieveRemitos() {
 
   const remitosParsed = await Promise.all(
     remitos.map(async (remito) => {
-      const product = await retrieveProductDb({ _id: remito.product_id });
-      const client = await retrieveClientDbById(remito.client_id);
+      const clientProjection = {
+        _id: 1,
+        name: 1,
+      };
+      const productProjection = {
+        _id: 1,
+        name: 1,
+      };
+
+      const product = await retrieveProductDb(
+        { _id: remito.product_id },
+        productProjection
+      );
+      const client = await retrieveClientDbById(
+        remito.client_id,
+        clientProjection
+      );
 
       if (product[0]) {
         return {
@@ -151,9 +172,9 @@ async function generatePdf(remitos_id) {
   );
 
   const html = generateRemitoHtml(remitosInfo);
-  const pdf = await generatePdfWithHtml(html)
+  const pdf = await generatePdfWithHtml(html);
 
-  return pdf
+  return pdf;
 }
 
 async function insertRemitos(body) {

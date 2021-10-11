@@ -9,7 +9,13 @@ const {
 } = require("./request");
 
 async function retrieveUsers() {
-  const users = await retrieveUsersDb();
+  const projection = {
+    _id: 1,
+    email: 1,
+    role: 1,
+  };
+  const users = await retrieveUsersDb({}, projection);
+
 
   return users.length
     ? { status: 200, body: users }
@@ -19,9 +25,11 @@ async function retrieveUsers() {
 async function insertUser({ email, password, role }) {
   const passwordHashed = bcrypt.hashSync(password, 8);
 
-  const { created, status } = await insertUserDb(email, passwordHashed, role);
+  const created = await insertUserDb(email, passwordHashed, role);
 
-  return { status, body: created };
+  if (created) return { status: 201, body: "User created successfully" };
+
+  return { status: 200, body: "User already exist" };
 }
 
 async function login({ email, password }) {
