@@ -1,4 +1,4 @@
-const generateHtml = require("../../util/generateHtml");
+const generateRemitoHtml = require("../../util/generateRemitoHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const {
   updateClientInvoices,
@@ -150,7 +150,7 @@ async function generatePdf(remitos_id) {
     })
   );
 
-  const html = generateHtml(remitosInfo);
+  const html = generateRemitoHtml(remitosInfo);
   const pdf = await generatePdfWithHtml(html)
 
   return pdf
@@ -191,6 +191,8 @@ async function updateRemitoStatus(data) {
 
   const lastId = Math.max(...lastsIdParsed);
   const lastIdPlusOne = lastId + 1;
+
+  // Todos los remitos que estan aca, se suman e impactan sobre la c/c del cliente
 
   const result = await Promise.all(
     data.map((remitoId) => {

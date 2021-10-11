@@ -12,7 +12,7 @@ async function insertClientDb(body) {
     contacto: body.contacto,
     assigned_products: body.assigned_products,
     sales: body.sales,
-    checking_account: body.checkingAccount
+    checking_account: body.checkingAccount,
   });
 }
 
@@ -40,8 +40,8 @@ async function updateClientInvoices(body) {
   );
 }
 
-async function retrieveClientDbById(id) {
-  return clientSchema.findById(id);
+async function retrieveClientDbById(id, projection = "") {
+  return clientSchema.findById(id, projection);
 }
 
 module.exports = {
@@ -50,5 +50,5 @@ module.exports = {
   updateClientDb,
   removeClientDb,
   updateClientInvoices,
-  retrieveClientDbById
+  retrieveClientDbById,
 };
