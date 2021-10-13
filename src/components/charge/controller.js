@@ -18,7 +18,7 @@ async function retrieveCharges() {
 
       if (client) {
         let chargeParsed = {
-          _id: charge.charge,
+          _id: charge._id,
           type: charge.type,
           amount: charge.amount,
           client: client,
