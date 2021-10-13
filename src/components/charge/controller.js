@@ -27,9 +27,16 @@ async function retrieveCharges() {
         };
 
         if (charge.type === "check") {
-          const check = await retrieveCheckDbById(charge.check_id);
+          const check = await retrieveCheckDbById(
+            charge.check_id,
+            "_id check_number status"
+          );
 
-          chargeParsed.check_id = check;
+          chargeParsed.check_id = {
+            _id: check._id,
+            checkNumber: check.check_number,
+            status: check.status,
+          };
         } else if (charge.type === "others") {
           chargeParsed.commentOthers = charge.comment_others;
         }
