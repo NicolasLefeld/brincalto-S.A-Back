@@ -59,7 +59,6 @@ async function insertCharges(body, paymentMethod) {
       check_number: body.checkNumber,
       bank: body.bank,
       expiration_date: body.expirationDate,
-      from: body.clientId,
       status: "received",
     };
     const checkInserted = await insertChecks(checkInfo);
