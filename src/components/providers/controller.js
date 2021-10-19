@@ -9,7 +9,7 @@ async function retrieveProvider() {
   const providers = await retrieveProviderDb();
 
   const body = providers.map((provider) => {
-    let checkingAccountTotal = provider.checkingAccount;
+    let checkingAccountTotal = provider.checking_account;
 
     provider.purchases.forEach((purchase) => {
       checkingAccountTotal += parseFloat(purchase.amount);
@@ -22,7 +22,7 @@ async function retrieveProvider() {
       checkingAccount:
         provider.purchases.length > 0
           ? checkingAccountTotal
-          : provider.checkingAccount,
+          : provider.checking_account,
       comment: provider.comment,
       cuit: provider.cuit,
       address: provider.address,
