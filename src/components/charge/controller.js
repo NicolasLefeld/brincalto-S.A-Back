@@ -24,19 +24,22 @@ async function retrieveCharges() {
           client,
           paymentComment: charge.payment_comment,
           date: charge.date,
+          check: {}
         };
 
         if (charge.type === "check") {
-          const check = await retrieveCheckDbById(
+          const checkData = await retrieveCheckDbById(
             charge.check_id,
             "_id check_number status"
           );
 
-          chargeParsed.checkId = {
-            id: check._id,
-            checkNumber: check.check_number,
-            status: check.status,
-          };
+          if (checkData){
+            chargeParsed.check = {
+              id: checkData._id,
+              checkNumber: checkData.check_number,
+              status: checkData.status,
+            };
+          }          
         } else if (charge.type === "others") {
           chargeParsed.commentOthers = charge.comment_others;
         }
