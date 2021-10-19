@@ -10,10 +10,23 @@ async function retrieveProduct() {
     _id: 1,
     name: 1,
   };
-  const product = await retrieveProductDb({}, projection);
+  const products = await retrieveProductDb({}, projection);
 
-  return product.length
-    ? { status: 200, body: product }
+  const productParsed = await Promise.all(
+    products.map(async (product) => {
+      if (product) {
+        return {
+          id: product._id,
+          name: product.name,
+        };
+      }
+
+      return product;
+    })
+  );
+
+  return product.productParsed
+    ? { status: 200, body: productParsed }
     : { status: 404, body: "Any products found" };
 }
 

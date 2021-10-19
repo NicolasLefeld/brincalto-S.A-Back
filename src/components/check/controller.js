@@ -14,6 +14,7 @@ async function retrieveChecks() {
 
       if (client) {
         return {
+          id: check._id,
           checkNumber: check.check_number,
           bank: check.bank,
           amount: check.amount,

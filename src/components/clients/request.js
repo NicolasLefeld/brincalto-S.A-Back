@@ -10,7 +10,7 @@ async function insertClientDb(body) {
     cuit: body.cuit,
     address: body.address,
     contacto: body.contacto,
-    assigned_products: body.assigned_products,
+    assigned_products: body.assignedProducts,
     sales: body.sales,
     checking_account: body.checkingAccount,
   });
@@ -26,7 +26,7 @@ async function removeClientDb(id) {
 
 async function updateClientInvoices(body) {
   return clientSchema.updateOne(
-    { _id: body.client_id },
+    { _id: body.clientId },
     {
       $push: {
         sales: {

@@ -37,15 +37,15 @@ async function retrieveInvoices() {
 
       if (client) {
         return {
-          _id: invoice._id,
+          id: invoice._id,
           date: invoice.date,
-          invoice_id: invoice.invoice_id,
+          invoiceId: invoice.invoice_id,
           net: invoice.net,
           netPlusIva: invoice.netPlusIva,
           total: invoice.total,
           type: invoice.type,
           status: invoice.status,
-          client_id: client,
+          client,
           concept: invoice.concept,
         };
       }
@@ -73,13 +73,13 @@ async function insertInvoices(body) {
 async function updateInvoices(id, data) {
   const newData = {
     date: data.date,
-    invoice_id: data.invoice_id,
+    invoice_id: data.invoiceId,
     net: data.net,
     netPlusIva: data.netPlusIva,
     total: data.total,
     type: data.type,
     status: data.status,
-    client_id: data.client_id,
+    client_id: data.clientId,
     concept: data.concept,
   };
 
@@ -125,12 +125,12 @@ async function retrieveRemitos() {
 
       if (product[0]) {
         return {
-          _id: remito._id,
+          id: remito._id,
           type: remito.type,
-          client_id: client,
+          client,
           date: remito.date,
-          remito_id: remito.remito_id,
-          product_id: product,
+          remitoId: remito.remito_id,
+          productId: product,
           observation: remito.observation,
           tons: remito.tons,
           price: remito.price,
@@ -156,12 +156,12 @@ async function generatePdf(remitos_id) {
       const product = await retrieveProductDbById(remito.product_id);
 
       return {
-        _id: remito._id,
+        id: remito._id,
         type: remito.type,
-        client_id: client,
+        client,
         date: remito.date,
-        remito_id: remito.remito_id,
-        product_id: product,
+        remitoId: remito.remito_id,
+        productId: product,
         observation: remito.observation,
         tons: remito.tons,
         price: remito.price,
@@ -189,10 +189,10 @@ async function insertRemitos(body) {
 async function updateRemitos(data) {
   const newData = {
     type: data.type,
-    client_id: data.client_id,
+    client_id: data.clientId,
     date: data.date,
-    remito_id: data.remito_id,
-    product_id: data.product_id,
+    remito_id: data.remitoId,
+    product_id: data.productId,
     observation: data.observation,
     tons: data.tons,
     price: data.price,

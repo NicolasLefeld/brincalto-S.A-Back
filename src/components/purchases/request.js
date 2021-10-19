@@ -6,9 +6,9 @@ async function retrievePurchasesDb(filter = {}) {
 
 async function insertPurchasesDb(body) {
   return await purchaseSchema.create({
-    provider_id: body.provider_id,
+    provider_id: body.providerId,
     date: body.date,
-    invoice_id: body.invoice_id,
+    invoice_id: body.invoiceId,
     concept: body.concept,
     net: body.net,
     netPlusIva: body.netPlusIva,

@@ -18,7 +18,7 @@ async function insertInvoicesDb(body) {
     total: body.total,
     type: body.type,
     status: body.status,
-    client_id: body.client_id,
+    client_id: body.clientId,
     concept: body.concept,
   });
 
@@ -50,10 +50,10 @@ async function retrieveRemitosByIdDb(filter = {}, projection = '') {
 async function insertRemitosDb(body) {
   const created = await remitoSchema.create({
     type: body.type,
-    client_id: body.client_id,
+    client_id: body.clientId,
     date: body.date,
-    remito_id: body.remito_id,
-    product_id: body.product_id,
+    remito_id: body.remitoId,
+    product_id: body.productId,
     observation: body.observation,
     tons: body.tons,
     price: body.price,

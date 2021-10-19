@@ -6,7 +6,7 @@ const providerSchema = new mongoose.Schema(
     comment: String,
     cuit: String,
     address: String,
-    checkingAccount: Number,
+    checking_account: Number,
     purchases: [
       {
         concept: String,

@@ -25,10 +25,10 @@ async function retrievePurchases() {
       );
 
       return {
-        _id: purchase._id,
+        id: purchase._id,
         provider,
         date: purchase.date,
-        invoice_id: purchase.invoice_id,
+        invoiceId: purchase.invoice_id,
         concept: purchase.concept,
         net: purchase.net,
         netPlusIva: purchase.netPlusIva,
@@ -47,11 +47,11 @@ async function retrievePurchases() {
 async function insertPurchases(body) {
   const created = await insertPurchasesDb(body);
 
-  await updateProviderpurchases(body.provider_id, {
+  await updateProviderpurchases(body.providerId, {
     concept: body.concept,
     date: body.date,
     amount: body.total,
-    invoice_id: created._id,
+    invoice_id: created.id,
   });
 
   return created
@@ -61,9 +61,9 @@ async function insertPurchases(body) {
 
 async function updatePurchases(id, data) {
   const newData = {
-    provider_id: data.provider_id,
+    provider_id: data.providerId,
     date: data.date,
-    invoice_id: data.invoice_id,
+    invoice_id: data.invoiceId,
     concept: data.concept,
     net: data.net,
     netPlusIva: data.netPlusIva,

@@ -16,7 +16,7 @@ async function retrieveProvider() {
     });
 
     return {
-      _id: provider._id,
+      id: provider._id,
       name: provider.name,
       purchases: provider.purchases,
       checkingAccount:
@@ -46,7 +46,7 @@ async function updateProvider(id, data) {
   const newData = {
     name: data.name,
     purchases: data.purchase,
-    checkingAccount: data.checkingAccount,
+    checking_account: data.checkingAccount,
     comment: data.comment,
     cuit: data.cuit,
     address: data.address,

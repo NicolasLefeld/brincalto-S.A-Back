@@ -7,10 +7,36 @@ const {
 } = require("./request");
 
 async function retrieveStock(type) {
-  const stock = await retrieveStockDb(type);
+  const stocks = await retrieveStockDb(type);
 
-  return stock.length
-    ? { status: 200, body: stock }
+  const stocksParsed = await Promise.all(
+    stocks.map(async (stock) => {
+      if (stock.type === "spare") {
+        return {
+          type: stock.type,
+          quantity: stock.quantity,
+          product: stock.product,
+          comment: stock.comment,
+          movements: stock.movements,
+        };
+      } else if (stock.type === "oil") {
+        return {
+          type: stock.type,
+          oilId: stock.oilId,
+          liters: stock.liters,
+          availableLitters: stock.availableLitters,
+          costPerLitter: stock.costPerLitter,
+          comment: stock.comment,
+          movements: stock.movements,
+        };
+      }
+
+      return stock;
+    })
+  );
+
+  return stocksParsed.length
+    ? { status: 200, body: stocksParsed }
     : { status: 404, body: "Any stock found" };
 }
 

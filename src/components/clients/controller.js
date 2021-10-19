@@ -18,7 +18,7 @@ async function retrieveClient() {
       });
 
       return {
-        _id: client._id,
+        id: client._id,
         name: client.name,
         cuit: client.cuit,
         address: client.address,
@@ -56,7 +56,7 @@ async function updateClient(id, data) {
     cuit: data.cuit,
     address: data.address,
     contacto: data.contacto,
-    assigned_products: data.assigned_products,
+    assigned_products: data.assignedProducts,
     sales: data.sales,
   };
 

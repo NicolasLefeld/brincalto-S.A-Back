@@ -18,10 +18,10 @@ async function retrieveCharges() {
 
       if (client) {
         let chargeParsed = {
-          _id: charge._id,
+          id: charge._id,
           type: charge.type,
           amount: charge.amount,
-          client: client,
+          client,
           paymentComment: charge.payment_comment,
           date: charge.date,
         };
@@ -33,7 +33,7 @@ async function retrieveCharges() {
           );
 
           chargeParsed.check_id = {
-            _id: check._id,
+            id: check._id,
             checkNumber: check.check_number,
             status: check.status,
           };

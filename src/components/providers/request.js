@@ -8,7 +8,7 @@ async function insertProviderDb(body) {
   const created = await providerSchema.create({
     name: body.name,
     purchases: body.purchases,
-    checkingAccount: body.checkingAccount,
+    checking_account: body.checkingAccount,
     comment: body.comment,
     cuit: body.cuit,
     address: body.address,
