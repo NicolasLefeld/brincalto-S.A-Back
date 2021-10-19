@@ -32,7 +32,7 @@ async function retrieveCharges() {
             "_id check_number status"
           );
 
-          chargeParsed.check_id = {
+          chargeParsed.checkId = {
             id: check._id,
             checkNumber: check.check_number,
             status: check.status,
