@@ -25,7 +25,7 @@ async function retrieveProduct() {
     })
   );
 
-  return product.productParsed
+  return productParsed.length
     ? { status: 200, body: productParsed }
     : { status: 404, body: "Any products found" };
 }
