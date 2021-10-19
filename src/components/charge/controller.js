@@ -24,7 +24,7 @@ async function retrieveCharges() {
           client,
           paymentComment: charge.payment_comment,
           date: charge.date,
-          check: {}
+          check: {},
         };
 
         if (charge.type === "check") {
@@ -33,13 +33,13 @@ async function retrieveCharges() {
             "_id check_number status"
           );
 
-          if (checkData){
+          if (checkData) {
             chargeParsed.check = {
               id: checkData._id,
               checkNumber: checkData.check_number,
               status: checkData.status,
             };
-          }          
+          }
         } else if (charge.type === "others") {
           chargeParsed.commentOthers = charge.comment_others;
         }
@@ -69,9 +69,14 @@ async function insertCharges(body, paymentMethod) {
     const checkInfo = {
       check_number: body.checkNumber,
       bank: body.bank,
+      amount: body.amount,
       expiration_date: body.expirationDate,
+      from: body.clientId,
+      to: "",
       status: "received",
+      date: body.date,
     };
+    
     const checkInserted = await insertChecks(checkInfo);
 
     charge.check_id = checkInserted._id;
