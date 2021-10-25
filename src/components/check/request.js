@@ -18,9 +18,14 @@ async function retrieveCheckDbById(id, projection = "") {
   return checkSchema.findById(id, projection);
 }
 
+async function removeCheckDb(id) {
+  return checkSchema.findByIdAndDelete(id);
+}
+
 module.exports = {
   retrieveChecksDb,
   insertChecksDb,
   updateChecksDb,
-  retrieveCheckDbById
+  retrieveCheckDbById,
+  removeCheckDb
 };

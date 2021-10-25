@@ -21,6 +21,13 @@ router
     res.status(status).json(body);
   })
 
+  .post("/getPdf", async (req, res) => {
+    const buffer = await generatePdf(req.body);
+
+    res.write(buffer,'binary');
+    res.end(null, 'binary');
+  })
+
   .delete("/:id", async (req, res) => {
     const { id } = req.params;
 

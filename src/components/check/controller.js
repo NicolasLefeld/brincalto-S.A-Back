@@ -3,6 +3,7 @@ const {
   retrieveChecksDb,
   insertChecksDb,
   updateChecksDb,
+  removeCheckDb
 } = require("./request");
 
 async function retrieveChecks() {
@@ -52,8 +53,17 @@ async function moveCheckToDelivered(id, providerId) {
   return modifiedCount ? true : false;
 }
 
+async function removeCheck(id) {
+  const removed = await removeCheckDb(id);
+
+  return removed !== null
+    ? { status: 200, body: "Deleted successfully" }
+    : { status: 404, body: "Any record found" };
+}
+
 module.exports = {
   retrieveChecks,
   insertChecks,
   moveCheckToDelivered,
+  removeCheck
 };

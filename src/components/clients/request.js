@@ -44,6 +44,17 @@ async function retrieveClientDbById(id, projection = "") {
   return clientSchema.findById(id, projection);
 }
 
+async function updateCheckingAccount(clientId, value) {
+  return clientSchema.updateOne(
+    { _id: clientId },
+    {
+      $inc: {
+        checking_account: value,
+      },
+    }
+  );
+}
+
 module.exports = {
   retrieveClientDb,
   insertClientDb,
@@ -51,4 +62,5 @@ module.exports = {
   removeClientDb,
   updateClientInvoices,
   retrieveClientDbById,
+  updateCheckingAccount,
 };

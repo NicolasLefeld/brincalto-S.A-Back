@@ -2,11 +2,12 @@ const generateHtml = require("../../util/generateRemitoHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const { insertChecks } = require("../check/controller");
 const { retrieveClientDbById } = require("../clients/request");
-const { retrieveCheckDbById } = require("../check/request");
+const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   retrieveChargesDb,
   insertChargesDb,
   removeChargesDb,
+  retrieveChargesByIdDb,
 } = require("./request");
 
 async function retrieveCharges() {
@@ -76,7 +77,7 @@ async function insertCharges(body, paymentMethod) {
       status: "received",
       date: body.date,
     };
-    
+
     const checkInserted = await insertChecks(checkInfo);
 
     charge.check_id = checkInserted._id;
@@ -84,10 +85,10 @@ async function insertCharges(body, paymentMethod) {
     charge.comment_others = body.commentOthers;
   }
 
-  const created = await insertChargesDb(charge);
-
-  // TODO: Impactar sobre c/c del body.clientId
-  // TODO: buffer here = pdf
+  const created = await Promise.all(
+    insertChargesDb(charge),
+    updateCheckingAccount(body.client_id, body.amount)
+  );
 
   if (created) return { status: 201, body: { created, pdf: "buffer here" } };
 
@@ -95,15 +96,66 @@ async function insertCharges(body, paymentMethod) {
 }
 
 async function removeCharges(id) {
-  const removed = await removeChargesDb(id);
-  // TODO: borrar el cheque y modificar la c/c
+  const { check_id, amount, client_id } = await retrieveChargesByIdDb(id);
+  const removed = await Promise.all(
+    removeChargesDb(id),
+    removeCheckDb(check_id),
+    updateCheckingAccount(client_id, amount * -1)
+  );
+
   return removed !== null
     ? { status: 200, body: "Deleted successfully" }
     : { status: 404, body: "Any record found" };
+}
+
+async function generatePdf(chageresIds) {
+  const client = await retrieveClientDbById(
+    chageresIds[0].client_id,
+    "_id name cuit address contacto"
+  );
+
+  const chargesInfo = await Promise.all(
+    chageresIds.map(async (chagereId) => {
+      let chargeParsed = {
+        id: charge._id,
+        type: charge.type,
+        amount: charge.amount,
+        client,
+        paymentComment: charge.payment_comment,
+        date: charge.date,
+        check: {},
+      };
+
+      if (charge.type === "check") {
+        const checkData = await retrieveCheckDbById(
+          charge.check_id,
+          "_id check_number status"
+        );
+
+        if (checkData) {
+          chargeParsed.check = {
+            id: checkData._id,
+            checkNumber: checkData.check_number,
+            status: checkData.status,
+          };
+        }
+      } else if (charge.type === "others") {
+        chargeParsed.commentOthers = charge.comment_others;
+      }
+
+      return chargeParsed;
+    })
+  );
+
+  const html = generateRemitoHtml(chargesInfo);
+  const pdf = await generatePdfWithHtml(html);
+
+  return pdf;
 }
 
 module.exports = {
   retrieveCharges,
   insertCharges,
   removeCharges,
+  generatePdf,
 };

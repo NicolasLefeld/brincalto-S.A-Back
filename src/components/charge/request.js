@@ -6,6 +6,10 @@ async function retrieveChargesDb(filter = {}) {
   return chargeSchema.find(filter);
 }
 
+async function retrieveChargesByIdDb(id) {
+  return chargeSchema.findById(id);
+}
+
 async function insertChargesDb(charge) {
   const created = await chargeSchema.create(charge);
 
@@ -19,4 +23,5 @@ module.exports = {
   retrieveChargesDb,
   insertChargesDb,
   removeChargesDb,
+  retrieveChargesByIdDb,
 };
