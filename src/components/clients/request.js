@@ -44,7 +44,7 @@ async function retrieveClientDbById(id, projection = "") {
   return clientSchema.findById(id, projection);
 }
 
-async function updateCheckingAccount(clientId, value) {
+async function updateClientCheckingAccount(clientId, value) {
   return clientSchema.updateOne(
     { _id: clientId },
     {
@@ -62,5 +62,5 @@ module.exports = {
   removeClientDb,
   updateClientInvoices,
   retrieveClientDbById,
-  updateCheckingAccount,
+  updateClientCheckingAccount,
 };

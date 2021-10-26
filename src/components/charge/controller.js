@@ -1,7 +1,10 @@
-const generateHtml = require("../../util/generateRemitoHtml");
+const generateChargeHtml = require("../../util/generateChargeHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const { insertChecks } = require("../check/controller");
-const { retrieveClientDbById } = require("../clients/request");
+const {
+  retrieveClientDbById,
+  updateClientCheckingAccount,
+} = require("../clients/request");
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   retrieveChargesDb,
@@ -57,16 +60,16 @@ async function retrieveCharges() {
     : { status: 404, body: "Any charge found" };
 }
 
-async function insertCharges(body, paymentMethod) {
+async function insertCharges(body) {
   let charge = {
-    type: paymentMethod,
+    type: body.paymentMethod,
     amount: body.amount,
     client_id: body.clientId,
     payment_comment: body.paymentComment,
     date: body.date,
   };
 
-  if (paymentMethod === "check") {
+  if (body.paymentMethod === "check") {
     const checkInfo = {
       check_number: body.checkNumber,
       bank: body.bank,
@@ -81,13 +84,13 @@ async function insertCharges(body, paymentMethod) {
     const checkInserted = await insertChecks(checkInfo);
 
     charge.check_id = checkInserted._id;
-  } else if (paymentMethod === "others") {
+  } else if (body.paymentMethod === "others") {
     charge.comment_others = body.commentOthers;
   }
 
   const created = await Promise.all(
     insertChargesDb(charge),
-    updateCheckingAccount(body.client_id, body.amount)
+    updateClientCheckingAccount(body.client_id, body.amount)
   );
 
   if (created) return { status: 201, body: { created, pdf: "buffer here" } };
@@ -100,7 +103,7 @@ async function removeCharges(id) {
   const removed = await Promise.all(
     removeChargesDb(id),
     removeCheckDb(check_id),
-    updateCheckingAccount(client_id, amount * -1)
+    updateClientCheckingAccount(client_id, amount * -1)
   );
 
   return removed !== null
@@ -116,6 +119,7 @@ async function generatePdf(chageresIds) {
 
   const chargesInfo = await Promise.all(
     chageresIds.map(async (chagereId) => {
+      const charge = await retrieveChargesByIdDb(chagereId);
       let chargeParsed = {
         id: charge._id,
         type: charge.type,
@@ -147,7 +151,7 @@ async function generatePdf(chageresIds) {
     })
   );
 
-  const html = generateRemitoHtml(chargesInfo);
+  const html = generateChargeHtml(chargesInfo);
   const pdf = await generatePdfWithHtml(html);
 
   return pdf;

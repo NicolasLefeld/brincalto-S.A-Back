@@ -45,6 +45,17 @@ async function retrieveProviderDbById(id, projection = "") {
   return providerSchema.findById(id, projection);
 }
 
+async function updateProviderCheckingAccount(providerId, value) {
+  return providerSchema.updateOne(
+    { _id: providerId },
+    {
+      $inc: {
+        checking_account: value,
+      },
+    }
+  );
+}
+
 module.exports = {
   retrieveProviderDb,
   insertProviderDb,
@@ -52,4 +63,5 @@ module.exports = {
   removeProviderDb,
   updateProviderpurchases,
   retrieveProviderDbById,
+  updateProviderCheckingAccount
 };

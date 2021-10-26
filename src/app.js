@@ -21,5 +21,6 @@ app.use("/sales", require("./components/sales/router"));
 app.use("/logs", require("./components/log/router"));
 app.use("/checks", require("./components/check/router"));
 app.use("/charges", require("./components/charge/router"));
+app.use("/payments", require("./components/payments/router"));
 
 module.exports = app;

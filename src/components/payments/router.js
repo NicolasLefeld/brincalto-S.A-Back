@@ -1,21 +1,21 @@
 const router = require("express").Router();
 const {
-  retrieveCharges,
-  insertCharges,
-  removeCharges,
+  retrievePayments,
+  insertPayments,
+  removePayments,
   generatePdf
 } = require("./controller");
 
 router
 
   .get("/", async (req, res) => {
-    const { status, body } = await retrieveCharges();
+    const { status, body } = await retrievePayments();
 
     res.status(status).json(body);
   })
 
   .post("/", async (req, res) => {
-    const { status, body } = await insertCharges(req.body);
+    const { status, body } = await insertPayments(req.body);
 
     res.status(status).json(body);
   })
@@ -30,7 +30,7 @@ router
   .delete("/:id", async (req, res) => {
     const { id } = req.params;
 
-    const { status, body } = await removeCharges(id);
+    const { status, body } = await removePayments(id);
 
     res.status(status).json(body);
   })
