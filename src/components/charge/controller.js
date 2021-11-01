@@ -88,12 +88,11 @@ async function insertCharges(body) {
     charge.comment_others = body.commentOthers;
   }
 
-  const created = await Promise.all(
-    insertChargesDb(charge),
-    updateClientCheckingAccount(body.client_id, body.amount)
-  );
+  const created = await insertChargesDb(charge);
 
-  if (created) return { status: 201, body: { created, pdf: "buffer here" } };
+  await updateClientCheckingAccount(body.clientId, body.amount);
+
+  if (created) return { status: 201, body: created };
 
   return { status: 500, body: "An error occurred" };
 }
@@ -120,34 +119,36 @@ async function generatePdf(chageresIds) {
   const chargesInfo = await Promise.all(
     chageresIds.map(async (chagereId) => {
       const charge = await retrieveChargesByIdDb(chagereId);
-      let chargeParsed = {
-        id: charge._id,
-        type: charge.type,
-        amount: charge.amount,
-        client,
-        paymentComment: charge.payment_comment,
-        date: charge.date,
-        check: {},
-      };
+      if (charge) {
+        let chargeParsed = {
+          id: charge._id,
+          type: charge.type,
+          amount: charge.amount,
+          client,
+          paymentComment: charge.payment_comment,
+          date: charge.date,
+          check: {},
+        };
 
-      if (charge.type === "check") {
-        const checkData = await retrieveCheckDbById(
-          charge.check_id,
-          "_id check_number status"
-        );
+        if (charge.type === "check") {
+          const checkData = await retrieveCheckDbById(
+            charge.check_id,
+            "_id check_number status"
+          );
 
-        if (checkData) {
-          chargeParsed.check = {
-            id: checkData._id,
-            checkNumber: checkData.check_number,
-            status: checkData.status,
-          };
+          if (checkData) {
+            chargeParsed.check = {
+              id: checkData._id,
+              checkNumber: checkData.check_number,
+              status: checkData.status,
+            };
+          }
+        } else if (charge.type === "others") {
+          chargeParsed.commentOthers = charge.comment_others;
         }
-      } else if (charge.type === "others") {
-        chargeParsed.commentOthers = charge.comment_others;
-      }
 
-      return chargeParsed;
+        return chargeParsed;
+      }
     })
   );
 
