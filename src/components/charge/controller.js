@@ -99,11 +99,9 @@ async function insertCharges(body) {
 
 async function removeCharges(id) {
   const { check_id, amount, client_id } = await retrieveChargesByIdDb(id);
-  const removed = await Promise.all(
-    removeChargesDb(id),
-    removeCheckDb(check_id),
-    updateClientCheckingAccount(client_id, amount * -1)
-  );
+  const removed = await removeChargesDb(id);
+  await removeCheckDb(check_id);
+  await updateClientCheckingAccount(client_id, amount * -1);
 
   return removed !== null
     ? { status: 200, body: "Deleted successfully" }
