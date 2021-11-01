@@ -60,7 +60,7 @@ async function retrievePayments() {
 
 async function insertPayments(body) {
   let payment = {
-    type: paymentMethod.paymentMethod,
+    type: body.paymentMethod,
     amount: body.amount,
     provider_id: body.providerId,
     payment_comment: body.paymentComment,
