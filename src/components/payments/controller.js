@@ -59,22 +59,23 @@ async function retrievePayments() {
 }
 
 async function insertPayments(body) {
+  const { paymentMethod } = body;
   let payment = {
-    type: body.paymentMethod,
+    type: paymentMethod,
     amount: body.amount,
     provider_id: body.providerId,
     payment_comment: body.paymentComment,
     date: body.date,
   };
 
-  if (paymentMethod.paymentMethod === "checkThirdParty") {
+  if (paymentMethod === "checkThirdParty") {
     const checkInserted = await moveCheckToDelivered(
       body.checkId,
       body.providerId
     );
 
     payment.check_id = checkInserted._id;
-  } else if (paymentMethod.paymentMethod === "checkOwn") {
+  } else if (paymentMethod === "checkOwn") {
     const checkInfo = {
       check_number: body.checkNumber,
       bank: body.bank,
@@ -89,7 +90,7 @@ async function insertPayments(body) {
     const checkInserted = await insertChecks(checkInfo);
 
     payment.check_id = checkInserted._id;
-  } else if (paymentMethod.paymentMethod === "others") {
+  } else if (paymentMethod === "others") {
     payment.comment_others = body.commentOthers;
   }
 

@@ -2,12 +2,11 @@ const numberWithCommas = require("./numberWithCommas");
 
 function generateRemitoHtml(paymentsInfo) {
   let tableContent = "";
+  const amount = 0;
 
   paymentsInfo.forEach((paymentInfo) => {
     tableContent += `
-    <tr>
-      <td class="tr5 td9"><p class="p12 ft10">AAAAA</p></td>
-    </tr>`;
+    `;
   });
 
   return `
@@ -40,13 +39,6 @@ function generateRemitoHtml(paymentsInfo) {
         overflow: hidden;
       "
     >
-      <div style="position: absolute; left: 0px; top: 0px">
-        <img
-          src="e493de58-3b40-11ec-a980-0cc47a792c0a_id_e493de58-3b40-11ec-a980-0cc47a792c0a_files/background1.jpg"
-          width="595"
-          height="841"
-        />
-      </div>
       <div
         style="position: absolute; left: 227.65px; top: 71.05px"
         class="cls_002"
@@ -119,13 +111,7 @@ function generateRemitoHtml(paymentsInfo) {
         style="position: absolute; left: 152.14px; top: 170.75px"
         class="cls_002"
       >
-        <span class="cls_002">217,800.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 182.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">SON:</span>
+        <span class="cls_002">${amount}</span>
       </div>
       <div
         style="position: absolute; left: 17.65px; top: 224.85px"
