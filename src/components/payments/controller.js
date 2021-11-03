@@ -1,6 +1,6 @@
 const generatePaymentHtml = require("../../util/generatePaymentHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
-const { insertChecks } = require("../check/controller");
+const { insertChecks, moveCheckToDelivered } = require("../check/controller");
 const { retrieveClientDbById } = require("../clients/request");
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const { updateProviderCheckingAccount } = require("../providers/request");
@@ -59,32 +59,29 @@ async function retrievePayments() {
 }
 
 async function insertPayments(body) {
-  const { paymentMethod } = body;
+  const { paymentMethod, providerId, amount, date } = body;
   let payment = {
     type: paymentMethod,
-    amount: body.amount,
-    provider_id: body.providerId,
+    provider_id: providerId,
     payment_comment: body.paymentComment,
-    date: body.date,
+    amount,
+    date,
   };
 
   if (paymentMethod === "checkThirdParty") {
-    const checkInserted = await moveCheckToDelivered(
-      body.checkId,
-      body.providerId
-    );
+    const checkInserted = await moveCheckToDelivered(body.checkId, providerId);
 
     payment.check_id = checkInserted._id;
   } else if (paymentMethod === "checkOwn") {
     const checkInfo = {
       check_number: body.checkNumber,
       bank: body.bank,
-      amount: body.amount,
       expiration_date: body.expirationDate,
       from: "Brincalto S.A.",
-      to: body.providerId,
+      to: providerId,
       status: "delivered",
-      date: body.date,
+      amount,
+      date,
     };
 
     const checkInserted = await insertChecks(checkInfo);
@@ -94,10 +91,8 @@ async function insertPayments(body) {
     payment.comment_others = body.commentOthers;
   }
 
-  const created = await Promise.all(
-    insertPaymentsDb(charge),
-    updateProviderCheckingAccount(body.client_id, body.amount)
-  );
+  const created = await insertPaymentsDb(payment);
+  await updateProviderCheckingAccount(providerId, amount);
 
   if (created) return { status: 201, body: created };
 
@@ -105,12 +100,13 @@ async function insertPayments(body) {
 }
 
 async function removePayments(id) {
-  const { check_id, amount, client_id } = await retrievePaymentsByIdDb(id);
+  console.log(await retrievePaymentsByIdDb(id));
+  const { _id, amount, provider_id } = await retrievePaymentsByIdDb(id);
 
   // TODO: Modificar el removeCheckDb cuando paga con otra cosa
   const removed = await removePaymentsDb(id);
-  await removeCheckDb(check_id);
-  await updateProviderCheckingAccount(client_id, amount * -1);
+  await removeCheckDb(_id);
+  await updateProviderCheckingAccount(provider_id, amount * -1);
 
   return removed !== null
     ? { status: 200, body: "Deleted successfully" }

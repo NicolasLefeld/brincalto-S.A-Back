@@ -3,7 +3,7 @@ const {
   retrieveChecksDb,
   insertChecksDb,
   updateChecksDb,
-  removeCheckDb
+  removeCheckDb,
 } = require("./request");
 
 async function retrieveChecks() {
@@ -11,23 +11,23 @@ async function retrieveChecks() {
 
   const checksParsed = await Promise.all(
     checks.map(async (check) => {
-      const client = await retrieveClientDbById(check.from, "_id name");
-
-      if (client) {
-        return {
-          id: check._id,
-          checkNumber: check.check_number,
-          bank: check.bank,
-          amount: check.amount,
-          expirationDate: check.expiration_date,
-          from: client,
-          to: check.to,
-          status: check.status,
-          date: check.date,
-        };
-      } else {
-        return check;
-      }
+      return {
+        id: check._id,
+        checkNumber: check.check_number,
+        bank: check.bank,
+        amount: check.amount,
+        expirationDate: check.expiration_date,
+        from:
+          check.from === "Brincalto S.A."
+            ? {
+                _id: "",
+                name: "Brincalto S.A.",
+              }
+            : await retrieveClientDbById(check.from, "_id name"),
+        to: check.to,
+        status: check.status,
+        date: check.date,
+      };
     })
   );
 
@@ -65,5 +65,5 @@ module.exports = {
   retrieveChecks,
   insertChecks,
   moveCheckToDelivered,
-  removeCheck
+  removeCheck,
 };

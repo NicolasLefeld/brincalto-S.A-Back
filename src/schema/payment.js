@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema(
   {
-    type: { type: String, enum: ["check", "cash", "others"] },
+    type: { type: String, enum: ["check", "cash", "others", "checkThirdParty", "checkOwn"] },
     check_id: String,
     amount: Number,
     provider_id: String,

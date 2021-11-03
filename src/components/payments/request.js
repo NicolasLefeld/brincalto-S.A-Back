@@ -1,7 +1,7 @@
 const { paymentSchema } = require("../../schema/payment");
 
 async function retrievePaymentsDb(filter = {}) {
-  filter["$or"] = [{ type: "check" }, { type: "cash" }, { type: "others" }];
+  //filter["$or"] = [{ type: "check" }, { type: "cash" }, { type: "others" }];
 
   return paymentSchema.find(filter);
 }
