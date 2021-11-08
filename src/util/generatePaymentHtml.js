@@ -1,319 +1,229 @@
-const numberWithCommas = require("./numberWithCommas");
+const getDateFormated = require("./getDateFormated");
+var writtenNumber = require("written-number");
 
 function generateRemitoHtml(paymentsInfo) {
-  let tableContent = "";
-  const amount = 0;
+  console.log(paymentsInfo);
+  let totalAmount = 0;
+  let details = "";
+  let observations = "";
+  let paymentPdfId = 1;
+  let today = new Date();
+  const todayFormated = getDateFormated(today);
 
   paymentsInfo.forEach((paymentInfo) => {
-    tableContent += `
-    `;
+    totalAmount += paymentInfo.amount;
+    const { type } = paymentInfo.payment;
+    if (type.includes("check")) {
+      const { amount, expiration_date, check_number } = paymentInfo.check;
+      details += `
+      <tr>
+        <td>Cheque</td>
+        <td>${check_number}</td>
+        <td>${getDateFormated(expiration_date)}</td>
+        <td>${amount}</td>
+      </tr>`;
+    } else {
+      details += `
+      <tr>
+        <td>Efectivo</td>
+        <td>&nbsp;</td>
+        <td>${todayFormated}</td>
+        <td>${paymentInfo.amount}</td>
+      </tr>`;
+    }
   });
+
+  const writenAmount = writtenNumber(totalAmount, { lang: "es" });
+  const writenAmountCapitalized =
+    writenAmount[0].toUpperCase() + writenAmount.substring(1);
 
   return `
   <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>PDF - Cobros</title>
     <style type="text/css">
-      <!--
-      span.cls_002{font-family:Arial,serif;font-size:9.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
-      div.cls_002{font-family:Arial,serif;font-size:9.0px;color:rgb(0,0,0);font-weight:normal;font-style:normal;text-decoration: none}
-      span.cls_003{font-family:Arial,serif;font-size:8.8px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
-      div.cls_003{font-family:Arial,serif;font-size:8.8px;color:rgb(0,0,0);font-weight:bold;font-style:normal;text-decoration: none}
-      -->
-    </style>
-    <script
-      type="text/javascript"
-      src="e493de58-3b40-11ec-a980-0cc47a792c0a_id_e493de58-3b40-11ec-a980-0cc47a792c0a_files/wz_jsgraphics.js"
-    ></script>
-  </head>
-  <body>
-    <div
-      style="
-        position: absolute;
-        left: 50%;
-        margin-left: -297px;
-        top: 0px;
-        width: 595px;
-        height: 841px;
-        border-style: outset;
+      body {
+        margin: 30px;
+        border: 1px solid black;
+        font: 12px "Arial";
+      }
+
+      #page_1 {
+        position: relative;
         overflow: hidden;
-      "
-    >
-      <div
-        style="position: absolute; left: 227.65px; top: 71.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">Orden de Pago Nº:</span>
+        margin: 0px;   
+      }
+      #page_1 #id1_2 {
+        margin-top: 556px;
+        margin-left: 60px;
+        width: 692px;
+      }
+
+      .p0 {
+        text-align: left;
+        padding-left: 289px;
+        margin-top: 20px;
+      }
+      .p1 {
+        text-align: left;
+        padding-left: 289px;
+        margin-top: 9px;
+        margin-bottom: 0px;
+      }
+  
+      .p6 {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+      }
+      .p12 {
+        text-align: left;
+        padding-left: 9px;
+        margin-top: 31px;
+        margin-bottom: 0px;
+      }
+      .p13 {
+        white-space: nowrap;
+      }
+      .p14 {
+        white-space: nowrap;
+      }
+      .p15 {
+        white-space: nowrap;
+      }
+      .p16 {
+        white-space: nowrap;
+      }
+      .p17 {
+        white-space: nowrap;
+      }
+      .td1 {
+        padding: 0px;
+        margin: 0px;
+        width: 77px;
+        vertical-align: bottom;
+      }
+      .td2 {
+        padding: 0px;
+        margin: 0px;
+        width: 273px;
+        vertical-align: bottom;
+      }
+      .td13 {
+        padding: 0px;
+        margin: 0px;
+        width: 197px;
+        vertical-align: bottom;
+      }
+      .td14 {
+        padding: 0px;
+        margin: 0px;
+        width: 261px;
+        vertical-align: bottom;
+      }
+      .td15 {
+        padding: 0px;
+        margin: 0px;
+        width: 234px;
+        vertical-align: bottom;
+      }
+      .tr0 {
+        height: 7px;
+      }
+      .tr3 {
+        height: 15px;
+      }
+      .t1 {
+        width: 753px;
+        margin-top: 49px;
+      }
+      .t2 {
+        width: 692px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="page_1">
+      <div id="id1_1">
+        <table class="p0">
+          <tr>
+            <td>Orden de Pago Nº: </td>
+            <td><b>${paymentPdfId}</b></td>
+          </tr>
+          <tr>
+            <td>Fecha: </td>
+            <td>${todayFormated}</td>
+          </tr>
+        </table>
+
+<br>
+<br>
+
+        <table>
+          <tr>
+            <td>Paguese a: </td>
+            <td>${paymentsInfo[0].provider.name}</td>
+          </tr>
+          <tr>
+            <td>C.U.I.T.: </td>
+            <td>${paymentsInfo[0].provider.cuit}</td>
+          </tr>
+          <tr>
+            <td>Dirección: </td>
+            <td>${paymentsInfo[0].provider.address}</td>
+          </tr>
+        </table>
+
+<br>
+<hr>
+<br>
+
+        <table>
+          <tr>
+            <td>LA CANTIDAD DE PESOS: </td>
+            <td>${totalAmount}</td>
+          </tr>
+          <tr>
+            <td>SON: </td>
+            <td>${writenAmountCapitalized}</td>
+          </tr>
+        </table>
+<br>
+<hr>
+<br>
+        <table width="100%">
+          <tr>
+            <td colspan="4">SEGUN EL SIGUIENTE DETALLE:</td>
+          </tr>
+          <div>
+            ${details}
+          </div>
+        </table>
+
+        <hr>
+        
+        
+        <p class="p12">O B S E R V A C I O N E S :<br><br>${observations}</p>
+		
       </div>
-      <div
-        style="position: absolute; left: 317.65px; top: 71.25px"
-        class="cls_003"
-      >
-        <span class="cls_003">00005712</span>
-      </div>
-      <div
-        style="position: absolute; left: 227.65px; top: 83.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">Fecha:</span>
-      </div>
-      <div
-        style="position: absolute; left: 317.65px; top: 83px"
-        class="cls_002"
-      >
-        <span class="cls_002">29/10/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 122.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">Paguese a:</span>
-      </div>
-      <div
-        style="position: absolute; left: 77.65px; top: 122.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">1049-BRINCALTO SA</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 134.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">C.U.I.T.:</span>
-      </div>
-      <div
-        style="position: absolute; left: 77.65px; top: 134.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">30714665681</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 152.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">Dirección:</span>
-      </div>
-      <div
-        style="position: absolute; left: 77.65px; top: 152.8px"
-        class="cls_002"
-      >
-        <span class="cls_002"
-          >RUTA 36 KM 16 ESTAFETA (MENDOZA, LAVALLE) - C.P.: 5543</span
-        >
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 170.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">LA CANTIDAD DE PESOS:</span>
-      </div>
-      <div
-        style="position: absolute; left: 152.14px; top: 170.75px"
-        class="cls_002"
-      >
-        <span class="cls_002">${amount}</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 224.85px"
-        class="cls_002"
-      >
-        <span class="cls_002">SEGUN EL SIGUIENTE DETALLE:</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 242.6px"
-        class="cls_002"
-      >
-        <span class="cls_002">BANCO CREDICOOP</span>
-      </div>
-      <div
-        style="position: absolute; left: 155.65px; top: 242.6px"
-        class="cls_002"
-      >
-        <span class="cls_002">21350033</span>
-      </div>
-      <div
-        style="position: absolute; left: 227.65px; top: 242.6px"
-        class="cls_002"
-      >
-        <span class="cls_002">VIAJES</span>
-      </div>
-      <div
-        style="position: absolute; left: 425.65px; top: 242.55px"
-        class="cls_002"
-      >
-        <span class="cls_002">10/12/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 530.49px; top: 242.55px"
-        class="cls_002"
-      >
-        <span class="cls_002">55,000.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 253.9px"
-        class="cls_002"
-      >
-        <span class="cls_002">BANCO CREDICOOP</span>
-      </div>
-      <div
-        style="position: absolute; left: 155.65px; top: 253.9px"
-        class="cls_002"
-      >
-        <span class="cls_002">21350014</span>
-      </div>
-      <div
-        style="position: absolute; left: 227.65px; top: 253.9px"
-        class="cls_002"
-      >
-        <span class="cls_002">VIAJES</span>
-      </div>
-      <div
-        style="position: absolute; left: 425.65px; top: 253.85px"
-        class="cls_002"
-      >
-        <span class="cls_002">06/12/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 530.49px; top: 253.85px"
-        class="cls_002"
-      >
-        <span class="cls_002">55,000.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 265.2px"
-        class="cls_002"
-      >
-        <span class="cls_002">BANCO CREDICOOP</span>
-      </div>
-      <div
-        style="position: absolute; left: 155.65px; top: 265.2px"
-        class="cls_002"
-      >
-        <span class="cls_002">21350095</span>
-      </div>
-      <div
-        style="position: absolute; left: 227.65px; top: 265.2px"
-        class="cls_002"
-      >
-        <span class="cls_002">VIAJES</span>
-      </div>
-      <div
-        style="position: absolute; left: 425.65px; top: 265.15px"
-        class="cls_002"
-      >
-        <span class="cls_002">30/11/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 530.49px; top: 265.15px"
-        class="cls_002"
-      >
-        <span class="cls_002">53,500.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 276.5px"
-        class="cls_002"
-      >
-        <span class="cls_002">BANCO CREDICOOP</span>
-      </div>
-      <div
-        style="position: absolute; left: 155.65px; top: 276.5px"
-        class="cls_002"
-      >
-        <span class="cls_002">21350111</span>
-      </div>
-      <div
-        style="position: absolute; left: 227.65px; top: 276.5px"
-        class="cls_002"
-      >
-        <span class="cls_002">VIAJES</span>
-      </div>
-      <div
-        style="position: absolute; left: 425.65px; top: 276.45px"
-        class="cls_002"
-      >
-        <span class="cls_002">24/11/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 530.49px; top: 276.45px"
-        class="cls_002"
-      >
-        <span class="cls_002">54,300.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 304.8px"
-        class="cls_002"
-      >
-        <span class="cls_002">EN CONCEPTO DE:</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 321.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">FCA 0001-00001527</span>
-      </div>
-      <div
-        style="position: absolute; left: 171.59px; top: 321px"
-        class="cls_002"
-      >
-        <span class="cls_002">108,900.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 245.65px; top: 321px"
-        class="cls_002"
-      >
-        <span class="cls_002">21/10/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 332.35px"
-        class="cls_002"
-      >
-        <span class="cls_002">FCA 0001-00001528</span>
-      </div>
-      <div
-        style="position: absolute; left: 171.59px; top: 332.3px"
-        class="cls_002"
-      >
-        <span class="cls_002">108,900.00</span>
-      </div>
-      <div
-        style="position: absolute; left: 245.65px; top: 332.3px"
-        class="cls_002"
-      >
-        <span class="cls_002">21/10/2021</span>
-      </div>
-      <div
-        style="position: absolute; left: 17.65px; top: 361.65px"
-        class="cls_002"
-      >
-        <span class="cls_002">O B S E R V A C I O N E S :</span>
-      </div>
-      <div
-        style="position: absolute; left: 59.6px; top: 795.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">CONFECCIONO</span>
-      </div>
-      <div
-        style="position: absolute; left: 273.85px; top: 795.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">AUTORIZO</span>
-      </div>
-      <div
-        style="position: absolute; left: 453px; top: 795.05px"
-        class="cls_002"
-      >
-        <span class="cls_002">RECIBI CONFORME</span>
+      <div id="id1_2">
+        <table width="100%">
+          <tr>
+            <td>................................</td>
+            <td>................................</td>
+            <td>................................</td>
+          </tr>
+          <tr>
+            <td>CONFECCIONO</td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTORIZO</td>
+            <td>RECIBI CONFORME</td>
+          </tr>
+        </table>
       </div>
     </div>
   </body>
-</html>
-
-
-
-  
-            ${tableContent}
-  `;
+</html>`;
 }
 
 module.exports = generateRemitoHtml;

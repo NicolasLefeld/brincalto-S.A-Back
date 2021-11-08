@@ -3,7 +3,10 @@ const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const { insertChecks, moveCheckToDelivered } = require("../check/controller");
 const { retrieveClientDbById } = require("../clients/request");
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
-const { updateProviderCheckingAccount } = require("../providers/request");
+const {
+  updateProviderCheckingAccount,
+  retrieveProviderDbById,
+} = require("../providers/request");
 const {
   retrievePaymentsDb,
   insertPaymentsDb,
@@ -100,7 +103,6 @@ async function insertPayments(body) {
 }
 
 async function removePayments(id) {
-  console.log(await retrievePaymentsByIdDb(id));
   const { _id, amount, provider_id } = await retrievePaymentsByIdDb(id);
 
   // TODO: Modificar el removeCheckDb cuando paga con otra cosa
@@ -114,41 +116,33 @@ async function removePayments(id) {
 }
 
 async function generatePdf(paymentsIds) {
-  const client = await retrieveClientDbById(
-    paymentsIds[0].client_id,
-    "_id name cuit address contacto"
-  );
-
   const paymentsInfo = await Promise.all(
     paymentsIds.map(async (paymentId) => {
-      let paymentIdParsed = {
-        id: paymentId._id,
-        type: paymentId.type,
-        amount: paymentId.amount,
-        client,
-        paymentComment: paymentId.payment_comment,
-        date: paymentId.date,
+      const payment = await retrievePaymentsByIdDb(paymentId);
+      const provider = await retrieveProviderDbById(payment.provider_id);
+      const { type } = payment;
+      let paymentParsed = {
+        id: payment._id,
+        type: type,
+        amount: payment.amount,
+        payment,
+        paymentComment: payment.payment_comment,
+        date: payment.date,
+        provider,
         check: {},
       };
 
-      if (paymentId.type === "check") {
-        const checkData = await retrieveCheckDbById(
-          paymentId.check_id,
-          "_id check_number status"
-        );
+      if (type.includes("check")) {
+        const check = await retrieveCheckDbById(payment.check_id);
 
-        if (checkData) {
-          paymentIdParsed.check = {
-            id: checkData._id,
-            checkNumber: checkData.check_number,
-            status: checkData.status,
-          };
+        if (check) {
+          paymentParsed.check = check;
         }
-      } else if (paymentId.type === "others") {
-        paymentIdParsed.commentOthers = paymentId.comment_others;
+      } else if (type === "others") {
+        paymentParsed.commentOthers = payment.comment_others;
       }
 
-      return paymentIdParsed;
+      return paymentParsed;
     })
   );
 

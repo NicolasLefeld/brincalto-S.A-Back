@@ -1,7 +1,8 @@
 const numberWithCommas = require("./numberWithCommas");
+const getDateFormated = require("./getDateFormated");
 
 function generateRemitoHtml(remitosInfo) {
-  const client = remitosInfo[0].client_id.name;
+  const client = remitosInfo[0].client.name;
   const id = remitosInfo[0].statusId;
   const monthNames = [
     "Enero",
@@ -23,20 +24,18 @@ function generateRemitoHtml(remitosInfo) {
   let tableContent = "";
 
   remitosInfo.forEach((remitoInfo) => {
-    const month = remitoInfo.date.getUTCMonth() + 1; //months from 1-12
-    const day = remitoInfo.date.getUTCDate();
-    const year = remitoInfo.date.getUTCFullYear();
-
     tableContent += `
     <tr>
-      <td class="tr5 td9"><p class="p12 ft10">${day}/${month}/${year}</p></td>
-      <td class="tr5 td10"><p class="p13 ft10">${remitoInfo.remito_id}</p></td>
+      <td class="tr5 td9"><p class="p12 ft10">${getDateFormated(
+        remitoInfo.date
+      )}</p></td>
+      <td class="tr5 td10"><p class="p13 ft10">${remitoInfo.remitoId}</p></td>
       <td class="tr5 td10"><p class="p13 ft10">${
-        remitoInfo.product_id.name
+        remitoInfo.productId.name
       }</p></td>
       ${
         remitosInfo[0].tons
-          ? '<td class="tr5 td11"><p class="p13 ft10">${remitoInfo.tons}</p></td>'
+          ? `<td class="tr5 td11"><p class="p13 ft10">${remitoInfo.tons}</p></td>`
           : ""
       }
       <td class="tr5 td11"><p class="p13 ft10">${remitoInfo.price}</p></td>
