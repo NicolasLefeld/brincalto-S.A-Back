@@ -104,11 +104,13 @@ async function insertPayments(body) {
 
 async function removePayments(id) {
   const { _id, amount, provider_id } = await retrievePaymentsByIdDb(id);
+  const { type } = await retrievePaymentsByIdDb(paymentId);
 
-  // TODO: Modificar el removeCheckDb cuando paga con otra cosa
   const removed = await removePaymentsDb(id);
-  await removeCheckDb(_id);
   await updateProviderCheckingAccount(provider_id, amount * -1);
+  if (type.includes("check")) {
+    await removeCheckDb(_id);
+  }
 
   return removed !== null
     ? { status: 200, body: "Deleted successfully" }

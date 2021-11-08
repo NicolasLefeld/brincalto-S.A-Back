@@ -1,596 +1,228 @@
-const numberWithCommas = require("./numberWithCommas");
+const getDateFormated = require("./getDateFormated");
+const writtenNumber = require("written-number");
 
-function generateRemitoHtml(chargesInfo) {
-  let tableContent = "";
+function generateChargeHtml(chargesInfo) {
+  let totalAmount = 0;
+  let details = "";
+  let observations = "";
+  let paymentPdfId = 1;
+  let today = new Date();
+  const todayFormated = getDateFormated(today);
 
-  chargesInfo.forEach((chargeInfo) => {
-    tableContent += `
-    <tr>
-      <td class="tr5 td9"><p class="p12 ft10">AAAAA</p></td>
-    </tr>`;
+  paymentsInfo.forEach((chargesInfo) => {
+    totalAmount += chargesInfo.amount;
+    const { type } = chargesInfo.payment;
+    if (type.includes("check")) {
+      const { amount, expiration_date, check_number } = chargesInfo.check;
+      details += `
+      <tr>
+        <td>Cheque</td>
+        <td>${check_number}</td>
+        <td>${getDateFormated(expiration_date)}</td>
+        <td>${amount}</td>
+      </tr>`;
+    } else {
+      details += `
+      <tr>
+        <td>Efectivo</td>
+        <td>&nbsp;</td>
+        <td>${todayFormated}</td>
+        <td>${chargesInfo.amount}</td>
+      </tr>`;
+    }
   });
 
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+  const writenAmount = writtenNumber(totalAmount, { lang: "es" });
+  const writenAmountCapitalized =
+    writenAmount[0].toUpperCase() + writenAmount.substring(1);
+
+  return `
   <html>
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <title>--EL CHANGO--</title>
-      <meta name="author" content="brincalto" />
-      <style type="text/css">
-        body {
-          margin-top: 0px;
-          margin-left: 0px;
-        }
+  <head>
+    <title>PDF - Cobros</title>
+    <style type="text/css">
+      body {
+        margin: 30px;
+        border: 1px solid black;
+        font: 12px "Arial";
+      }
+
+      #page_1 {
+        position: relative;
+        overflow: hidden;
+        margin: 0px;   
+      }
+      #page_1 #id1_2 {
+        margin-top: 556px;
+        margin-left: 60px;
+        width: 692px;
+      }
+
+      .p0 {
+        text-align: left;
+        padding-left: 289px;
+        margin-top: 20px;
+      }
+      .p1 {
+        text-align: left;
+        padding-left: 289px;
+        margin-top: 9px;
+        margin-bottom: 0px;
+      }
   
-        #page_1 {
-          position: relative;
-          overflow: hidden;
-          margin: 73px 0px 75px 24px;
-          padding: 0px;
-          border: none;
-          width: 792px;
-        }
-        #page_1 #id1_1 {
-          border: none;
-          margin: 0px 0px 0px 25px;
-          padding: 0px;
-          border: none;
-          width: 767px;
-          overflow: hidden;
-        }
-        #page_1 #id1_1 #id1_1_1 {
-          float: left;
-          border: none;
-          margin: 0px 0px 0px 0px;
-          padding: 0px;
-          border: none;
-          width: 426px;
-          overflow: hidden;
-        }
-        #page_1 #id1_1 #id1_1_2 {
-          float: left;
-          border: none;
-          margin: 25px 0px 0px 0px;
-          padding: 0px;
-          border: none;
-          width: 341px;
-          overflow: hidden;
-        }
-        #page_1 #id1_2 {
-          border: none;
-          margin: 0px 0px 0px 21px;
-          padding: 0px;
-          border: none;
-          width: 771px;
-          overflow: hidden;
-        }
-        #page_1 #id1_2 #id1_2_1 {
-          float: left;
-          border: none;
-          margin: 0px 0px 0px 0px;
-          padding: 0px;
-          border: none;
-          width: 394px;
-          overflow: hidden;
-        }
-        #page_1 #id1_2 #id1_2_2 {
-          float: left;
-          border: none;
-          margin: 30px 0px 0px 0px;
-          padding: 0px;
-          border: none;
-          width: 377px;
-          overflow: hidden;
-        }
-        #page_1 #id1_3 {
-          border: none;
-          margin: 20px 0px 0px 0px;
-          padding: 0px;
-          border: none;
-          width: 697px;
-          overflow: hidden;
-        }
-  
-        #page_2 {
-          position: relative;
-          overflow: hidden;
-          margin: 72px 0px 245px 24px;
-          padding: 0px;
-          border: none;
-          width: 697px;
-        }
-  
-        .ft0 {
-          font: italic bold 32px "Arial";
-          line-height: 36px;
-        }
-        .ft1 {
-          font: bold 16px "Calibri";
-          text-decoration: underline;
-          line-height: 17px;
-        }
-        .ft2 {
-          font: bold 16px "Calibri";
-          line-height: 17px;
-        }
-        .ft3 {
-          font: bold 11px "Arial";
-          line-height: 14px;
-        }
-        .ft4 {
-          font: bold 16px "Calibri";
-          text-decoration: underline;
-          line-height: 19px;
-        }
-        .ft5 {
-          font: bold 16px "Calibri";
-          line-height: 19px;
-        }
-        .ft6 {
-          font: 15px "Calibri";
-          line-height: 18px;
-        }
-        .ft7 {
-          font: 12px "Calibri";
-          line-height: 14px;
-          position: relative;
-          bottom: 9px;
-        }
-        .ft8 {
-          font: 1px "Calibri";
-          line-height: 1px;
-        }
-        .ft9 {
-          font: 1px "Calibri";
-          line-height: 16px;
-        }
-        .ft10 {
-          font: 14px "Calibri";
-          line-height: 17px;
-        }
-        .ft11 {
-          font: 1px "Calibri";
-          line-height: 4px;
-        }
-  
-        .p0 {
-          text-align: left;
-          margin-top: 0px;
-          margin-bottom: 0px;
-        }
-        .p1 {
-          text-align: left;
-          padding-left: 71px;
-          margin-top: 4px;
-          margin-bottom: 0px;
-        }
-        .p2 {
-          text-align: left;
-          padding-left: 53px;
-          margin-top: 4px;
-          margin-bottom: 0px;
-        }
-        .p3 {
-          text-align: left;
-          padding-left: 24px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p4 {
-          text-align: left;
-          padding-left: 19px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p5 {
-          text-align: left;
-          padding-left: 12px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p6 {
-          text-align: left;
-          padding-left: 6px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p7 {
-          text-align: left;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p8 {
-          text-align: left;
-          padding-left: 18px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p9 {
-          text-align: left;
-          padding-left: 8px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p10 {
-          text-align: left;
-          padding-left: 27px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p11 {
-          text-align: center;
-          padding-right: 15px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p12 {
-          text-align: center;
-          padding-left: 3px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p13 {
-          text-align: center;
-          padding-left: 1px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p14 {
-          text-align: left;
-          padding-left: 2px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p15 {
-          text-align: right;
-          padding-right: 7px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p16 {
-          text-align: center;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p17 {
-          text-align: right;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p18 {
-          text-align: right;
-          padding-right: 16px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p19 {
-          text-align: left;
-          padding-left: 28px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p20 {
-          text-align: right;
-          padding-right: 27px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p21 {
-          text-align: center;
-          padding-right: 13px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p22 {
-          text-align: right;
-          padding-right: 1px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-        .p23 {
-          text-align: left;
-          padding-left: 17px;
-          margin-top: 0px;
-          margin-bottom: 0px;
-          white-space: nowrap;
-        }
-  
-        .td0 {
-          border-left: #000000 1px solid;
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td1 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td2 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 69px;
-          vertical-align: bottom;
-        }
-        .td3 {
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 14px;
-          vertical-align: bottom;
-        }
-        .td4 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 95px;
-          vertical-align: bottom;
-        }
-        .td5 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 102px;
-          vertical-align: bottom;
-        }
-        .td6 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 155px;
-          vertical-align: bottom;
-        }
-        .td7 {
-          padding: 0px;
-          margin: 0px;
-          width: 14px;
-          vertical-align: bottom;
-        }
-        .td8 {
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 95px;
-          vertical-align: bottom;
-        }
-        .td9 {
-          border-left: #000000 1px solid;
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td10 {
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td11 {
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 69px;
-          vertical-align: bottom;
-        }
-        .td12 {
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 14px;
-          vertical-align: bottom;
-        }
-        .td13 {
-          border-bottom: #000000 1px solid;
-          border-right: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 15px;
-          vertical-align: bottom;
-        }
-        .td14 {
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 87px;
-          vertical-align: bottom;
-        }
-        .td15 {
-          border-right: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 155px;
-          vertical-align: bottom;
-        }
-        .td16 {
-          border-left: #000000 1px solid;
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td17 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 85px;
-          vertical-align: bottom;
-        }
-        .td18 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 69px;
-          vertical-align: bottom;
-        }
-        .td19 {
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 14px;
-          vertical-align: bottom;
-        }
-        .td20 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 95px;
-          vertical-align: bottom;
-        }
-        .td21 {
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 15px;
-          vertical-align: bottom;
-        }
-        .td22 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 87px;
-          vertical-align: bottom;
-        }
-        .td23 {
-          border-right: #000000 1px solid;
-          border-top: #000000 1px solid;
-          border-bottom: #000000 1px solid;
-          padding: 0px;
-          margin: 0px;
-          width: 155px;
-          vertical-align: bottom;
-        }
-        .td24 {
-          padding: 0px;
-          margin: 0px;
-          width: 76px;
-          vertical-align: bottom;
-        }
-        .td25 {
-          padding: 0px;
-          margin: 0px;
-          width: 26px;
-          vertical-align: bottom;
-        }
-        .td26 {
-          padding: 0px;
-          margin: 0px;
-          width: 87px;
-          vertical-align: bottom;
-        }
-        .td27 {
-          padding: 0px;
-          margin: 0px;
-          width: 151px;
-          vertical-align: bottom;
-        }
-        .td28 {
-          padding: 0px;
-          margin: 0px;
-          width: 340px;
-          vertical-align: bottom;
-        }
-  
-        .tr0 {
-          height: 35px;
-        }
-        .tr1 {
-          height: 19px;
-        }
-        .tr2 {
-          height: 16px;
-        }
-        .tr3 {
-          height: 20px;
-        }
-        .tr4 {
-          height: 4px;
-        }
-        .tr5 {
-          height: 18px;
-        }
-        .tr6 {
-          height: 38px;
-        }
-        .tr7 {
-          height: 43px;
-        }
-  
-        .t0 {
-          width: 697px;
-          font: 15px "Calibri";
-        }
-        .t1 {
-          width: 340px;
-          margin-left: 300px;
-          margin-top: 19px;
-          font: 15px "Calibri";
-        }
-      </style>
-    </head>
-    <body>
-      <div id="page_1">    
-        <div id="id1_3">
-          <table cellpadding="0" cellspacing="0" class="t0">
-            ${tableContent}
-          </table>
-        </div>
+      .p6 {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+      }
+      .p12 {
+        text-align: left;
+        padding-left: 9px;
+        margin-top: 31px;
+        margin-bottom: 0px;
+      }
+      .p13 {
+        white-space: nowrap;
+      }
+      .p14 {
+        white-space: nowrap;
+      }
+      .p15 {
+        white-space: nowrap;
+      }
+      .p16 {
+        white-space: nowrap;
+      }
+      .p17 {
+        white-space: nowrap;
+      }
+      .td1 {
+        padding: 0px;
+        margin: 0px;
+        width: 77px;
+        vertical-align: bottom;
+      }
+      .td2 {
+        padding: 0px;
+        margin: 0px;
+        width: 273px;
+        vertical-align: bottom;
+      }
+      .td13 {
+        padding: 0px;
+        margin: 0px;
+        width: 197px;
+        vertical-align: bottom;
+      }
+      .td14 {
+        padding: 0px;
+        margin: 0px;
+        width: 261px;
+        vertical-align: bottom;
+      }
+      .td15 {
+        padding: 0px;
+        margin: 0px;
+        width: 234px;
+        vertical-align: bottom;
+      }
+      .tr0 {
+        height: 7px;
+      }
+      .tr3 {
+        height: 15px;
+      }
+      .t1 {
+        width: 753px;
+        margin-top: 49px;
+      }
+      .t2 {
+        width: 692px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="page_1">
+      <div id="id1_1">
+        <table class="p0">
+          <tr>
+            <td>Orden de Pago Nº: </td>
+            <td><b>${paymentPdfId}</b></td>
+          </tr>
+          <tr>
+            <td>Fecha: </td>
+            <td>${todayFormated}</td>
+          </tr>
+        </table>
+
+<br>
+<br>
+
+        <table>
+          <tr>
+            <td>Paguese a: </td>
+            <td>${paymentsInfo[0].provider.name}</td>
+          </tr>
+          <tr>
+            <td>C.U.I.T.: </td>
+            <td>${paymentsInfo[0].provider.cuit}</td>
+          </tr>
+          <tr>
+            <td>Dirección: </td>
+            <td>${paymentsInfo[0].provider.address}</td>
+          </tr>
+        </table>
+
+<br>
+<hr>
+<br>
+
+        <table>
+          <tr>
+            <td>LA CANTIDAD DE PESOS: </td>
+            <td>${totalAmount}</td>
+          </tr>
+          <tr>
+            <td>SON: </td>
+            <td>${writenAmountCapitalized}</td>
+          </tr>
+        </table>
+<br>
+<hr>
+<br>
+        <table width="100%">
+          <tr>
+            <td colspan="4">SEGUN EL SIGUIENTE DETALLE:</td>
+          </tr>
+          <div>
+            ${details}
+          </div>
+        </table>
+
+        <hr>
+        
+        
+        <p class="p12">O B S E R V A C I O N E S :<br><br>${observations}</p>
+		
       </div>
-    </body>
-  </html>
-  `;
+      <div id="id1_2">
+        <table width="100%">
+          <tr>
+            <td>................................</td>
+            <td>................................</td>
+            <td>................................</td>
+          </tr>
+          <tr>
+            <td>CONFECCIONO</td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTORIZO</td>
+            <td>RECIBI CONFORME</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>`;
 }
 
-module.exports = generateRemitoHtml;
+module.exports = generateChargeHtml;

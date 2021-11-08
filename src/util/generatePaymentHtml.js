@@ -1,8 +1,7 @@
 const getDateFormated = require("./getDateFormated");
-var writtenNumber = require("written-number");
+const writtenNumber = require("written-number");
 
 function generateRemitoHtml(paymentsInfo) {
-  console.log(paymentsInfo);
   let totalAmount = 0;
   let details = "";
   let observations = "";
