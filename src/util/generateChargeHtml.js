@@ -1,228 +1,212 @@
 const getDateFormated = require("./getDateFormated");
-const writtenNumber = require("written-number");
 
-function generateChargeHtml(chargesInfo) {
+function generateChargeHtml(chargesInfo, detailsInfo, client) {
   let totalAmount = 0;
+  let totalAmountInvoices = 0;
   let details = "";
+  let invoices = ""
   let observations = "";
-  let paymentPdfId = 1;
+  let paymentPdfId = 1; // TODO: Generar en DB los autoincrementales
   let today = new Date();
   const todayFormated = getDateFormated(today);
 
-  paymentsInfo.forEach((chargesInfo) => {
-    totalAmount += chargesInfo.amount;
-    const { type } = chargesInfo.payment;
-    if (type.includes("check")) {
-      const { amount, expiration_date, check_number } = chargesInfo.check;
+  chargesInfo.forEach((chargeInfo) => {
+    totalAmount += chargeInfo.amount;
+    const { type } = chargeInfo;
+    if (type === "check") {
       details += `
-      <tr>
-        <td>Cheque</td>
-        <td>${check_number}</td>
-        <td>${getDateFormated(expiration_date)}</td>
-        <td>${amount}</td>
-      </tr>`;
+        <tr>
+          <td>
+            Cheque
+          </td>
+          <td>
+            ${chargeInfo.check.check_number}
+          </td>
+          <td>
+          ${chargeInfo.check.bank}
+          </td>
+          <td>
+          ${getDateFormated(chargeInfo.check.expiration_date)}
+          </td>
+          <td>
+            $ ${chargeInfo.check.amount}
+          </td>
+          <td>
+            
+          </td>
+        </tr>`;
     } else {
       details += `
-      <tr>
-        <td>Efectivo</td>
-        <td>&nbsp;</td>
-        <td>${todayFormated}</td>
-        <td>${chargesInfo.amount}</td>
-      </tr>`;
+        <tr>
+          <td>
+            Efectivo
+          </td>
+          <td>
+           
+          </td>
+          <td>
+          
+          </td>
+          <td>
+          ${getDateFormated(chargeInfo.date)}
+          </td>
+          <td>
+            $ ${chargeInfo.amount}
+          </td>
+          <td>
+          ${chargeInfo.paymentComment}
+          </td>
+        </tr>`;
     }
   });
 
-  const writenAmount = writtenNumber(totalAmount, { lang: "es" });
-  const writenAmountCapitalized =
-    writenAmount[0].toUpperCase() + writenAmount.substring(1);
+  detailsInfo.forEach((detailInfo) => {
+    totalAmountInvoices += detailInfo.total;
+
+    invoices += `<tr>
+    <td>
+      ${detailInfo.invoice_id}
+    </td>
+    <td>
+      ${getDateFormated(detailInfo.date)}
+    </td>
+    <td>
+      $ ${detailInfo.total}
+    </td>
+  </tr>`;
+  })
 
   return `
-  <html>
-  <head>
-    <title>PDF - Cobros</title>
-    <style type="text/css">
-      body {
-        margin: 30px;
-        border: 1px solid black;
-        font: 12px "Arial";
-      }
+  <body style="font-family: Arial">
+    <div style="width:85%;margin-left: auto;margin-right: auto;margin-top:40px">
+      <table style="width:100%">
+        <tr>
+          <td style="width:40%">
+            &nbsp;
+          </td>
+          <td style="width:60%">
+            <div style="text-align: center;float: left;">
+              <div style="margin-left: auto;margin-right: auto;font-size:40px; width: 40px; border: 2px solid black">
+                X
+              </div>
+              <div style="width: 150px; margin-left: auto;margin-right: auto;">
+                Documento no valido como factura
+              </div>
+            </div>
+            <div style="width:200px; font-size: 13px; float: right">
+              <b>
+                RECIBO DE COBRANZA<br>
+                NUMERO 0001-${paymentPdfId}<br>
+                ORIGINAL<br>
+                FECHA ${todayFormated}
+              </b>
+            </div>
+          </td>
+        </tr>
+      </table>
+      
+      <br><br>
 
-      #page_1 {
-        position: relative;
-        overflow: hidden;
-        margin: 0px;   
-      }
-      #page_1 #id1_2 {
-        margin-top: 556px;
-        margin-left: 60px;
-        width: 692px;
-      }
-
-      .p0 {
-        text-align: left;
-        padding-left: 289px;
-        margin-top: 20px;
-      }
-      .p1 {
-        text-align: left;
-        padding-left: 289px;
-        margin-top: 9px;
-        margin-bottom: 0px;
-      }
-  
-      .p6 {
-        margin-top: 0px;
-        margin-bottom: 0px;
-        white-space: nowrap;
-      }
-      .p12 {
-        text-align: left;
-        padding-left: 9px;
-        margin-top: 31px;
-        margin-bottom: 0px;
-      }
-      .p13 {
-        white-space: nowrap;
-      }
-      .p14 {
-        white-space: nowrap;
-      }
-      .p15 {
-        white-space: nowrap;
-      }
-      .p16 {
-        white-space: nowrap;
-      }
-      .p17 {
-        white-space: nowrap;
-      }
-      .td1 {
-        padding: 0px;
-        margin: 0px;
-        width: 77px;
-        vertical-align: bottom;
-      }
-      .td2 {
-        padding: 0px;
-        margin: 0px;
-        width: 273px;
-        vertical-align: bottom;
-      }
-      .td13 {
-        padding: 0px;
-        margin: 0px;
-        width: 197px;
-        vertical-align: bottom;
-      }
-      .td14 {
-        padding: 0px;
-        margin: 0px;
-        width: 261px;
-        vertical-align: bottom;
-      }
-      .td15 {
-        padding: 0px;
-        margin: 0px;
-        width: 234px;
-        vertical-align: bottom;
-      }
-      .tr0 {
-        height: 7px;
-      }
-      .tr3 {
-        height: 15px;
-      }
-      .t1 {
-        width: 753px;
-        margin-top: 49px;
-      }
-      .t2 {
-        width: 692px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="page_1">
-      <div id="id1_1">
-        <table class="p0">
-          <tr>
-            <td>Orden de Pago Nº: </td>
-            <td><b>${paymentPdfId}</b></td>
-          </tr>
-          <tr>
-            <td>Fecha: </td>
-            <td>${todayFormated}</td>
-          </tr>
-        </table>
-
-<br>
-<br>
-
+      <div style="border:2px solid black;">
         <table>
           <tr>
-            <td>Paguese a: </td>
-            <td>${paymentsInfo[0].provider.name}</td>
+            <td>
+              Señores
+            </td>
+            <td>
+            &emsp;${client.name}
+            </td>
           </tr>
           <tr>
-            <td>C.U.I.T.: </td>
-            <td>${paymentsInfo[0].provider.cuit}</td>
+            <td>
+              Domicilio
+            </td>
+            <td>
+            &emsp;${client.address}
+            </td>
           </tr>
           <tr>
-            <td>Dirección: </td>
-            <td>${paymentsInfo[0].provider.address}</td>
+            <td>
+              CUIT
+            </td>
+            <td>
+            &emsp;${client.cuit}
+            </td>
           </tr>
         </table>
-
-<br>
-<hr>
-<br>
-
-        <table>
-          <tr>
-            <td>LA CANTIDAD DE PESOS: </td>
-            <td>${totalAmount}</td>
-          </tr>
-          <tr>
-            <td>SON: </td>
-            <td>${writenAmountCapitalized}</td>
-          </tr>
-        </table>
-<br>
-<hr>
-<br>
-        <table width="100%">
-          <tr>
-            <td colspan="4">SEGUN EL SIGUIENTE DETALLE:</td>
-          </tr>
-          <div>
-            ${details}
-          </div>
-        </table>
-
-        <hr>
-        
-        
-        <p class="p12">O B S E R V A C I O N E S :<br><br>${observations}</p>
-		
       </div>
-      <div id="id1_2">
+    <hr style="border-top: 2px solid black;">
+      <div>
+        <b>DETALLES DE CONCEPTOS RECIBIDOS:</b>
+        <br><br>
         <table width="100%">
           <tr>
-            <td>................................</td>
-            <td>................................</td>
-            <td>................................</td>
+            <td>
+              TIPO
+            </td>
+            <td>
+              NUMERO
+            </td>
+            <td>
+              BANCO
+            </td>
+            <td>
+              FECHA VTO
+            </td>
+            <td>
+              IMPORTE
+            </td>
+            <td>
+              OBSERVACION
+            </td>
           </tr>
+          ${details}
+          <tr><td colspan="7">&nbsp;</td></tr>
           <tr>
-            <td>CONFECCIONO</td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTORIZO</td>
-            <td>RECIBI CONFORME</td>
+            <td colspan="5" style="text-align: right;">
+              <b>IMPORTE TOTAL RECIBIDO: $ ${totalAmount}</b>
+            </td>
           </tr>
         </table>
+      </div>
+    <hr style="border-top: 2px solid black;" >
+      <div>
+        <b>COMPROBANTES CANCELADOS:</b>
+        <br><br>
+        <table width="75%" style="margin-left: auto;margin-right: auto;">
+          <tr>
+            <td>
+              NUMERO
+            </td>
+            <td>
+              FECHA
+            </td>
+            <td>
+              IMPORTE
+            </td>
+          </tr>
+          ${invoices}
+          <tr><td colspan="3">&nbsp;</td></tr>
+          <tr>
+            <td colspan="3" style="text-align: right;">
+              <b>IMPORTE TOTAL FACTURAS: $ ${totalAmountInvoices}</b>
+            </td>
+          </tr>
+        </table>
+      </div>
+    <hr style="border-top: 2px solid black;" >
+      <div>
+        <b>OBSERVACIONES:</b> ${observations}
+      
+      </div>
+
+      <div style="margin-top: 200px; margin-left: 50px">
+        <b>FIRMA: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</b>
+      
       </div>
     </div>
   </body>
-</html>`;
+`;
 }
 
 module.exports = generateChargeHtml;

@@ -3,10 +3,14 @@ const { remitoSchema } = require("../../schema/remito");
 
 /* INVOICES */
 
-async function retrieveInvoicesDb(filter = {}) {
-  filter["$or"] = [{ type: "A" }, { type: "B" }];
-
+async function retrieveInvoicesDb(
+  filter = { $or: [{ type: "A" }, { type: "B" }] }
+) {
   return invoiceSchema.find(filter);
+}
+
+async function retrieveInvoicesByIdDb(id) {
+  return invoiceSchema.findById(id);
 }
 
 async function insertInvoicesDb(body) {
@@ -35,13 +39,13 @@ async function removeInvoicesDb(id) {
 
 /* REMITOS */
 
-async function retrieveRemitosDb(filter = {}, projection = '') {
+async function retrieveRemitosDb(filter = {}, projection = "") {
   filter["$or"] = [{ type: "batea" }, { type: "chasis" }, { type: "ton" }];
 
   return remitoSchema.find(filter, projection);
 }
 
-async function retrieveRemitosByIdDb(filter = {}, projection = '') {
+async function retrieveRemitosByIdDb(filter = {}, projection = "") {
   filter["$or"] = [{ type: "batea" }, { type: "chasis" }, { type: "ton" }];
 
   return remitoSchema.findById(filter, projection);
@@ -72,7 +76,7 @@ async function updateRemitosStatusDb(id, statusId) {
     { _id: id },
     {
       status: "processed",
-      statusId
+      statusId,
     }
   );
 }
@@ -83,6 +87,7 @@ async function removeRemitosDb(id) {
 
 module.exports = {
   retrieveInvoicesDb,
+  retrieveInvoicesByIdDb,
   insertInvoicesDb,
   updateInvoicesDb,
   removeInvoicesDb,

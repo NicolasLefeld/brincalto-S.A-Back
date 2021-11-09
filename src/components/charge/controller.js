@@ -5,6 +5,7 @@ const {
   retrieveClientDbById,
   updateClientCheckingAccount,
 } = require("../clients/request");
+const { retrieveInvoicesByIdDb } = require("../sales/request")
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   retrieveChargesDb,
@@ -108,49 +109,47 @@ async function removeCharges(id) {
     : { status: 404, body: "Any record found" };
 }
 
-async function generatePdf(chageresIds) {
-  const client = await retrieveClientDbById(
-    chageresIds[0].client_id,
-    "_id name cuit address contacto"
-  );
-
+async function generatePdf({details, invoices}) {
+  let clientId;
   const chargesInfo = await Promise.all(
-    chageresIds.map(async (chagereId) => {
-      const charge = await retrieveChargesByIdDb(chagereId);
-      if (charge) {
-        let chargeParsed = {
-          id: charge._id,
-          type: charge.type,
-          amount: charge.amount,
-          client,
-          paymentComment: charge.payment_comment,
-          date: charge.date,
-          check: {},
-        };
+    details.map(async (chargeId) => {
+      const charge = await retrieveChargesByIdDb(chargeId);
 
-        if (charge.type === "check") {
-          const checkData = await retrieveCheckDbById(
-            charge.check_id,
-            "_id check_number status"
-          );
+      clientId = charge.client_id;
 
-          if (checkData) {
-            chargeParsed.check = {
-              id: checkData._id,
-              checkNumber: checkData.check_number,
-              status: checkData.status,
-            };
-          }
-        } else if (charge.type === "others") {
-          chargeParsed.commentOthers = charge.comment_others;
-        }
+      let chargeParsed = {
+        id: charge._id,
+        type: charge.type,
+        amount: charge.amount,
+        paymentComment: charge.payment_comment,
+        date: charge.date,
+        check: {},
+      };
 
-        return chargeParsed;
+      if (charge.type.includes("check")) {
+        const check = await retrieveCheckDbById(charge.check_id);
+
+        chargeParsed.check = check;
+      } else if (charge.type === "others") {
+        chargeParsed.commentOthers = charge.comment_others;
       }
+
+      return chargeParsed;
     })
   );
 
-  const html = generateChargeHtml(chargesInfo);
+  const detailsInfo = await Promise.all(
+    invoices.map(async (invoiceId) => {
+      const invoice = await retrieveInvoicesByIdDb(invoiceId);
+      // TODO: Cambiar el estado del invoice
+
+      return invoice;
+    })
+  );
+
+  const client = await retrieveClientDbById(clientId);
+
+  const html = generateChargeHtml(chargesInfo, detailsInfo, client);
   const pdf = await generatePdfWithHtml(html);
 
   return pdf;

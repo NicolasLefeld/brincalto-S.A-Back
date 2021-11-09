@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const {
   retrieveInvoices,
+  retrievePendingInvoices,
   generatePdf,
   insertInvoices,
   updateInvoices,
@@ -18,6 +19,14 @@ router
 
   .get("/invoices", async (req, res) => {
     const { status, body } = await retrieveInvoices();
+
+    res.status(status).json(body);
+  })
+
+  .get("/invoices/pending/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const { status, body } = await retrievePendingInvoices(id);
 
     res.status(status).json(body);
   })

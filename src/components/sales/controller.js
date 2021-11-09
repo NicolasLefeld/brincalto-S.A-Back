@@ -10,6 +10,7 @@ const {
 } = require("../products/request");
 const {
   retrieveInvoicesDb,
+  retrieveInvoicesByIdDb,
   insertInvoicesDb,
   updateInvoicesDb,
   removeInvoicesDb,
@@ -57,6 +58,31 @@ async function retrieveInvoices() {
   return invoices.length
     ? { status: 200, body: invoicesParsed }
     : { status: 404, body: "Any invoice found" };
+}
+
+async function retrievePendingInvoices(clientId) {
+  const filter = { client_id: clientId, $or: [{ type: "A" }, { type: "B" }] };
+  const invoices = await retrieveInvoicesDb(filter);
+
+  const invoicesParsed = await Promise.all(
+    invoices.map(async (invoice) => {
+      return {
+        id: invoice._id,
+        date: invoice.date,
+        invoiceId: invoice.invoice_id,
+        net: invoice.net,
+        netPlusIva: invoice.netPlusIva,
+        total: invoice.total,
+        type: invoice.type,
+        status: invoice.status,
+        concept: invoice.concept,
+      };
+    })
+  );
+
+  return invoices.length
+    ? { status: 200, body: invoicesParsed }
+    : { status: 404, body: "Any pending invoice found" };
 }
 
 async function insertInvoices(body) {
@@ -236,6 +262,7 @@ async function removeRemitos(id) {
 
 module.exports = {
   retrieveInvoices,
+  retrievePendingInvoices,
   insertInvoices,
   updateInvoices,
   removeInvoices,
