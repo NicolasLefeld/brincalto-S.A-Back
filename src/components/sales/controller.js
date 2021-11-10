@@ -3,6 +3,7 @@ const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const {
   updateClientInvoices,
   retrieveClientDbById,
+  updateClientCheckingAccount,
 } = require("../clients/request");
 const {
   retrieveProductDb,
@@ -10,7 +11,6 @@ const {
 } = require("../products/request");
 const {
   retrieveInvoicesDb,
-  retrieveInvoicesByIdDb,
   insertInvoicesDb,
   updateInvoicesDb,
   removeInvoicesDb,
@@ -131,23 +131,16 @@ async function retrieveRemitos() {
 
   const remitosParsed = await Promise.all(
     remitos.map(async (remito) => {
-      const clientProjection = {
-        _id: 1,
-        name: 1,
-      };
-      const productProjection = {
+      const projection = {
         _id: 1,
         name: 1,
       };
 
       const product = await retrieveProductDb(
         { _id: remito.product_id },
-        productProjection
+        projection
       );
-      const client = await retrieveClientDbById(
-        remito.client_id,
-        clientProjection
-      );
+      const client = await retrieveClientDbById(remito.client_id, projection);
 
       if (product[0]) {
         return {
@@ -175,11 +168,12 @@ async function retrieveRemitos() {
 }
 
 async function generatePdf(remitos_id) {
+  let client;
   const remitosInfo = await Promise.all(
     remitos_id.map(async (remito_id) => {
       const remito = await retrieveRemitosByIdDb(remito_id);
-      const client = await retrieveClientDbById(remito.client_id);
       const product = await retrieveProductDbById(remito.product_id);
+      if (!client) client = await retrieveClientDbById(remito.client_id);
 
       return {
         id: remito._id,
@@ -233,19 +227,26 @@ async function updateRemitos(data) {
 }
 
 async function updateRemitoStatus(data) {
+  let total = 0;
+  let clientId;
   const lastsId = await retrieveRemitosDb({}, { statusId: 1, _id: 0 });
   const lastsIdParsed = lastsId.map((ids) => (ids.statusId ? ids.statusId : 0));
 
   const lastId = Math.max(...lastsIdParsed);
   const lastIdPlusOne = lastId + 1;
 
-  // Todos los remitos que estan aca, se suman e impactan sobre la c/c del cliente
-
   const result = await Promise.all(
-    data.map((remitoId) => {
+    data.map(async (remitoId) => {
+      const { price, client_id } = await retrieveRemitosByIdDb(data[0]);
+      total += price;
+
+      if (!clientId) clientId = client_id;
+
       return updateRemitosStatusDb(remitoId, lastIdPlusOne);
     })
   );
+
+  updateClientCheckingAccount(clientId, total);
 
   return result.every((rs) => rs.modifiedCount === 1)
     ? { status: 200, body: "Updated successfully" }

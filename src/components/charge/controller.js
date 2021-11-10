@@ -1,12 +1,15 @@
 const generateChargeHtml = require("../../util/generateChargeHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const { insertChecks } = require("../check/controller");
+const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   retrieveClientDbById,
   updateClientCheckingAccount,
 } = require("../clients/request");
-const { retrieveInvoicesByIdDb } = require("../sales/request")
-const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
+const {
+  retrieveInvoicesByIdDb,
+  updateInvoicesDb,
+} = require("../sales/request");
 const {
   retrieveChargesDb,
   insertChargesDb,
@@ -109,39 +112,44 @@ async function removeCharges(id) {
     : { status: 404, body: "Any record found" };
 }
 
-async function generatePdf({details, invoices}) {
+async function generatePdf({ details, invoices }) {
   let clientId;
   const chargesInfo = await Promise.all(
     details.map(async (chargeId) => {
       const charge = await retrieveChargesByIdDb(chargeId);
 
-      clientId = charge.client_id;
+      if (charge) {
+        clientId = charge.client_id;
 
-      let chargeParsed = {
-        id: charge._id,
-        type: charge.type,
-        amount: charge.amount,
-        paymentComment: charge.payment_comment,
-        date: charge.date,
-        check: {},
-      };
+        let chargeParsed = {
+          id: charge._id,
+          type: charge.type,
+          amount: charge.amount,
+          paymentComment: charge.payment_comment,
+          date: charge.date,
+          check: {},
+        };
 
-      if (charge.type.includes("check")) {
-        const check = await retrieveCheckDbById(charge.check_id);
+        if (charge.type.includes("check")) {
+          const check = await retrieveCheckDbById(charge.check_id);
 
-        chargeParsed.check = check;
-      } else if (charge.type === "others") {
-        chargeParsed.commentOthers = charge.comment_others;
+          chargeParsed.check = check;
+        } else if (charge.type === "others") {
+          chargeParsed.commentOthers = charge.comment_others;
+        }
+
+        return chargeParsed;
       }
-
-      return chargeParsed;
+      return {};
     })
   );
 
   const detailsInfo = await Promise.all(
     invoices.map(async (invoiceId) => {
       const invoice = await retrieveInvoicesByIdDb(invoiceId);
-      // TODO: Cambiar el estado del invoice
+      await updateInvoicesDb(invoiceId, {
+        status: "paid",
+      });
 
       return invoice;
     })
@@ -149,7 +157,7 @@ async function generatePdf({details, invoices}) {
 
   const client = await retrieveClientDbById(clientId);
 
-  const html = generateChargeHtml(chargesInfo, detailsInfo, client);
+  const html = await generateChargeHtml(chargesInfo, detailsInfo, client);
   const pdf = await generatePdfWithHtml(html);
 
   return pdf;

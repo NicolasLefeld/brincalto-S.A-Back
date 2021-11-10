@@ -1,12 +1,13 @@
 const getDateFormated = require("./getDateFormated");
+const autoIncrementIdDb = require("../util/autoIncrementIdDb");
 
-function generateChargeHtml(chargesInfo, detailsInfo, client) {
+async function generateChargeHtml(chargesInfo, detailsInfo, client) {
   let totalAmount = 0;
   let totalAmountInvoices = 0;
   let details = "";
   let invoices = "";
   let observations = "";
-  let paymentPdfId = 1; // TODO: Generar en DB los autoincrementales
+  let chargePdfId = await autoIncrementIdDb("charge");
   let today = new Date();
   const todayFormated = getDateFormated(today);
 
@@ -64,19 +65,20 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
   });
 
   detailsInfo.forEach((detailInfo) => {
-    totalAmountInvoices += detailInfo.total;
-
-    invoices += `<tr>
-    <td>
-      ${detailInfo.invoice_id}
-    </td>
-    <td>
-      ${getDateFormated(detailInfo.date)}
-    </td>
-    <td>
-      $ ${detailInfo.total}
-    </td>
-  </tr>`;
+    if (detailInfo) {
+      totalAmountInvoices += detailInfo.total;
+      invoices += `<tr>
+      <td>
+        ${detailInfo.invoice_id}
+      </td>
+      <td>
+        ${getDateFormated(detailInfo.date)}
+      </td>
+      <td>
+        $ ${detailInfo.total}
+      </td>
+    </tr>`;
+    }
   });
 
   return `
@@ -99,7 +101,7 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
             <div style="width:200px; font-size: 13px; float: right">
               <b>
                 RECIBO DE COBRANZA<br>
-                NUMERO 0001-${paymentPdfId}<br>
+                NUMERO 0001-${chargePdfId}<br>
                 ORIGINAL<br>
                 FECHA ${todayFormated}
               </b>

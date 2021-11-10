@@ -1,11 +1,12 @@
 const getDateFormated = require("./getDateFormated");
 const writtenNumber = require("written-number");
+const autoIncrementIdDb = require("../util/autoIncrementIdDb")
 
-function generateRemitoHtml(paymentsInfo) {
+async function generateRemitoHtml(paymentsInfo) {
   let totalAmount = 0;
   let details = "";
   let observations = "";
-  let paymentPdfId = 1;
+  let paymentPdfId = await autoIncrementIdDb("payment");
   let today = new Date();
   const todayFormated = getDateFormated(today);
 

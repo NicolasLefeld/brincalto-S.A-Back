@@ -148,7 +148,7 @@ async function generatePdf(paymentsIds) {
     })
   );
 
-  const html = generatePaymentHtml(paymentsInfo);
+  const html = await generatePaymentHtml(paymentsInfo);
   const pdf = await generatePdfWithHtml(html);
 
   return pdf;
