@@ -4,13 +4,16 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
   let totalAmount = 0;
   let totalAmountInvoices = 0;
   let details = "";
-  let invoices = ""
+  let invoices = "";
   let observations = "";
   let paymentPdfId = 1; // TODO: Generar en DB los autoincrementales
   let today = new Date();
   const todayFormated = getDateFormated(today);
 
   chargesInfo.forEach((chargeInfo) => {
+    if (observations === "" && chargeInfo.paymentComment)
+      observations = chargeInfo.paymentComment;
+
     totalAmount += chargeInfo.amount;
     const { type } = chargeInfo;
     if (type === "check") {
@@ -32,7 +35,7 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
             $ ${chargeInfo.check.amount}
           </td>
           <td>
-            
+          
           </td>
         </tr>`;
     } else {
@@ -54,7 +57,7 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
             $ ${chargeInfo.amount}
           </td>
           <td>
-          ${chargeInfo.paymentComment}
+          ${type === "others" ? chargeInfo.commentOthers : ""}
           </td>
         </tr>`;
     }
@@ -74,7 +77,7 @@ function generateChargeHtml(chargesInfo, detailsInfo, client) {
       $ ${detailInfo.total}
     </td>
   </tr>`;
-  })
+  });
 
   return `
   <body style="font-family: Arial">
