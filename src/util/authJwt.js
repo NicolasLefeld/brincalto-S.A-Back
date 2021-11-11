@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 verifyToken = (req, res, next) => {
   if (process.env.NODE_ENV === "production" && req.url.search("/auth") === -1) {
-    let token = req.headers["x-access-token"];
+    let token = req.headers["Authorization"];
 
     if (!token) {
       return res.status(403).send({ message: "No token provided!" });
