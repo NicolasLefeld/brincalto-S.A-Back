@@ -143,6 +143,7 @@ async function retrieveRemitos() {
         { _id: remito.product_id },
         projection
       );
+      console.log(product);
       const client = await retrieveClientDbById(remito.client_id, projection);
 
       if (product[0]) {
@@ -156,8 +157,8 @@ async function retrieveRemitos() {
           date: remito.date,
           remitoId: remito.remito_id,
           product:{
-            id: product._id,
-            name: product.name
+            id: product[0]._id,
+            name: product[0].name
           },
           observation: remito.observation,
           tons: remito.tons,
