@@ -29,14 +29,13 @@ async function retrieveInvoices() {
 
   const invoicesParsed = await Promise.all(
     invoices.map(async (invoice) => {
-      console.log(invoice);
       const projection = {
         _id: 1,
         name: 1,
       };
 
       const client = await retrieveClientDbById(invoice.client_id, projection);
-      console.log(client);
+
       if (client) {
         return {
           id: invoice._id,
@@ -150,7 +149,10 @@ async function retrieveRemitos() {
         return {
           id: remito._id,
           type: remito.type,
-          client,
+          client: {
+            id: client._id,
+            name: client.name,
+          },
           date: remito.date,
           remitoId: remito.remito_id,
           productId: product,
