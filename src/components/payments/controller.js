@@ -1,7 +1,6 @@
 const generatePaymentHtml = require("../../util/generatePaymentHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
 const { insertChecks, moveCheckToDelivered } = require("../check/controller");
-const { retrieveClientDbById } = require("../clients/request");
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   updateProviderCheckingAccount,
@@ -19,7 +18,7 @@ async function retrievePayments() {
 
   const paymentsParsed = await Promise.all(
     payments.map(async (payment) => {
-      const client = await retrieveClientDbById(payment.client_id, "_id name");
+      const client = await retrieveProviderDbById(payment.provider_id, "_id name");
 
       if (client) {
         let paymentParsed = {
