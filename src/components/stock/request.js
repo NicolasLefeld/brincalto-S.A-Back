@@ -23,7 +23,7 @@ async function updateStockDb(id, newData, type) {
     const spare = await spareSchema.find({ _id: id });
     let spareQuantity = spare[0].quantity;
 
-    spareQuantity -= newData.quantity;
+    spareQuantity = spareQuantity + newData.quantity;
 
     return spareSchema.updateOne(
       { _id: id },
@@ -43,7 +43,7 @@ async function updateStockDb(id, newData, type) {
     const oil = await oilSchema.find({ _id: id });
     let availableLitters = oil[0].availableLitters;
 
-    availableLitters -= newData.littersTaken;
+    availableLitters = availableLitters + newData.littersTaken;
 
     return oilSchema.updateOne(
       { _id: id },
