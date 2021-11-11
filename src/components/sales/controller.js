@@ -155,7 +155,10 @@ async function retrieveRemitos() {
           },
           date: remito.date,
           remitoId: remito.remito_id,
-          productId: product,
+          product:{
+            id: product._id,
+            name: product.name
+          },
           observation: remito.observation,
           tons: remito.tons,
           price: remito.price,
