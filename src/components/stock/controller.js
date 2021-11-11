@@ -13,6 +13,7 @@ async function retrieveStock(type) {
     stocks.map(async (stock) => {
       if (stock.type === "spare") {
         return {
+          id: stock._id,
           type: stock.type,
           quantity: stock.quantity,
           product: stock.product,
@@ -21,6 +22,7 @@ async function retrieveStock(type) {
         };
       } else if (stock.type === "oil") {
         return {
+          id: stock._id,
           type: stock.type,
           oilId: stock.oilId,
           liters: stock.liters,
