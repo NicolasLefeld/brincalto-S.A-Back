@@ -43,7 +43,7 @@ async function updateStockDb(id, newData, type) {
     const oil = await oilSchema.find({ _id: id });
     let availableLitters = oil[0].availableLitters;
 
-    availableLitters = availableLitters + newData.littersTaken;
+    availableLitters = availableLitters - newData.littersTaken;
 
     return oilSchema.updateOne(
       { _id: id },
