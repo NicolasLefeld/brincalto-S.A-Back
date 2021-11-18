@@ -94,7 +94,7 @@ async function insertPayments(body) {
   }
 
   const created = await insertPaymentsDb(payment);
-  await updateProviderCheckingAccount(providerId, amount);
+  await updateProviderCheckingAccount(providerId, amount * -1);
 
   if (created) return { status: 201, body: created };
 
