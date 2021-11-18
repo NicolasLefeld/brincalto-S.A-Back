@@ -179,6 +179,7 @@ async function retrieveRemitos() {
 
 async function generatePdf(remitos_id) {
   let client;
+  
   const remitosInfo = await Promise.all(
     remitos_id.map(async (remito_id) => {
       const remito = await retrieveRemitosByIdDb(remito_id);
