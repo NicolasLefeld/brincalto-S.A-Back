@@ -97,7 +97,7 @@ async function insertPayments(body) {
   }
 
   const created = await insertPaymentsDb(payment);
-  await updateProviderCheckingAccount(providerId, amount * -1);
+  await updateProviderCheckingAccount(providerId, amount);
 
   if (created) return { status: 201, body: created };
 
@@ -118,11 +118,11 @@ async function removePayments(id) {
   const removed = await removePaymentsDb(paymentId);
 
   if (type === "checkOwn") {
-    const { _id: checkId } = await retrieveCheckDbById(check_id);
+    //const { _id: checkId } = await retrieveCheckDbById(check_id);
 
-    await removeCheckDb(checkId);
+    await removeCheckDb(check_id);
   } else if (type === "checkThirdParty") {
-    await changeCheckStatus(body.checkId, providerId, "received");
+    await changeCheckStatus(check_id, provider_id, "received");
   }
 
   return removed !== null

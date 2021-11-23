@@ -94,7 +94,7 @@ async function insertCharges(body) {
 
   const created = await insertChargesDb(charge);
 
-  await updateClientCheckingAccount(body.clientId, body.amount * -1);
+  await updateClientCheckingAccount(body.clientId, body.amount);
 
   if (created) return { status: 201, body: created };
 
@@ -102,10 +102,21 @@ async function insertCharges(body) {
 }
 
 async function removeCharges(id) {
-  const { check_id, amount, client_id } = await retrieveChargesByIdDb(id);
-  const removed = await removeChargesDb(id);
-  await removeCheckDb(check_id);
+  const {
+    _id: chargesId,
+    type,
+    check_id,
+    amount,
+    client_id,
+  } = await retrieveChargesByIdDb(id);
+
   await updateClientCheckingAccount(client_id, amount * -1);
+
+  const removed = await removeChargesDb(chargesId);
+
+  if (type === "check") {
+    await removeCheckDb(check_id);
+  }
 
   return removed !== null
     ? { status: 200, body: "Deleted successfully" }
