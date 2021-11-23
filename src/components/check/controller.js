@@ -42,9 +42,9 @@ async function insertChecks(body) {
   return created ? created : "error";
 }
 
-async function moveCheckToDelivered(id, providerId) {
+async function changeCheckStatus(id, providerId, status = "delivered") {
   let newData = {
-    status: "delivered",
+    status,
     to: providerId,
   };
 
@@ -64,6 +64,6 @@ async function removeCheck(id) {
 module.exports = {
   retrieveChecks,
   insertChecks,
-  moveCheckToDelivered,
+  changeCheckStatus,
   removeCheck,
 };

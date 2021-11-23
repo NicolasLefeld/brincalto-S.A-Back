@@ -1,6 +1,6 @@
 const generatePaymentHtml = require("../../util/generatePaymentHtml");
 const generatePdfWithHtml = require("../../util/generatePdfWithHtml");
-const { insertChecks, moveCheckToDelivered } = require("../check/controller");
+const { insertChecks, changeCheckStatus } = require("../check/controller");
 const { retrieveCheckDbById, removeCheckDb } = require("../check/request");
 const {
   updateProviderCheckingAccount,
@@ -18,14 +18,17 @@ async function retrievePayments() {
 
   const paymentsParsed = await Promise.all(
     payments.map(async (payment) => {
-      const client = await retrieveProviderDbById(payment.provider_id, "_id name");
+      const provider = await retrieveProviderDbById(
+        payment.provider_id,
+        "_id name"
+      );
 
-      if (client) {
+      if (provider) {
         let paymentParsed = {
           id: payment._id,
           type: payment.type,
           amount: payment.amount,
-          client,
+          provider,
           paymentComment: payment.payment_comment,
           date: payment.date,
           check: {},
@@ -71,7 +74,7 @@ async function insertPayments(body) {
   };
 
   if (paymentMethod === "checkThirdParty") {
-    const checkInserted = await moveCheckToDelivered(body.checkId, providerId);
+    const checkInserted = await changeCheckStatus(body.checkId, providerId);
 
     payment.check_id = checkInserted._id;
   } else if (paymentMethod === "checkOwn") {
@@ -102,13 +105,24 @@ async function insertPayments(body) {
 }
 
 async function removePayments(id) {
-  const { _id, amount, provider_id } = await retrievePaymentsByIdDb(id);
-  const { type } = await retrievePaymentsByIdDb(paymentId);
+  const {
+    _id: paymentId,
+    type,
+    check_id,
+    amount,
+    provider_id,
+  } = await retrievePaymentsByIdDb(id);
 
-  const removed = await removePaymentsDb(id);
   await updateProviderCheckingAccount(provider_id, amount * -1);
-  if (type.includes("check")) {
-    await removeCheckDb(_id);
+
+  const removed = await removePaymentsDb(paymentId);
+
+  if (type === "checkOwn") {
+    const { _id: checkId } = await retrieveCheckDbById(check_id);
+
+    await removeCheckDb(checkId);
+  } else if (type === "checkThirdParty") {
+    await changeCheckStatus(body.checkId, providerId, "received");
   }
 
   return removed !== null
