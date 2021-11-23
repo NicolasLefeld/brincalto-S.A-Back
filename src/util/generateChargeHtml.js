@@ -43,7 +43,7 @@ async function generateChargeHtml(chargesInfo, detailsInfo, client) {
       details += `
         <tr>
           <td>
-            Efectivo
+            ${type === "cash" ? "Efectivo" : "Otros"}
           </td>
           <td>
            
