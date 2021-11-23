@@ -4,7 +4,7 @@ async function autoIncrementIdDb(type) {
   const [extras] = await extrasSchema.find();
 
   if (type === "charge") {
-    const chargesLastIdPlusOne = extras.chargesLastId + 1;
+    const chargesLastIdPlusOne = parseInt(extras.chargesLastId) + 1;
 
     await extrasSchema.updateOne({
       $inc: {
@@ -14,11 +14,11 @@ async function autoIncrementIdDb(type) {
 
     return chargesLastIdPlusOne;
   } else if (type === "payment") {
-    const paymentsLastIdPlusOne = extras.paymentsLastId + 1;
+    const paymentsLastIdPlusOne = parseInt(extras.paymentsLastId) + 1;
 
     await extrasSchema.updateOne({
       $inc: {
-        chargesLastId: paymentsLastIdPlusOne,
+        paymentsLastId: paymentsLastIdPlusOne,
       },
     });
 
