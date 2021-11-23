@@ -26,7 +26,7 @@ async function removeClientDb(id) {
 
 async function updateClientInvoices(body) {
   return clientSchema.updateOne(
-    { client_id: body.clientId },
+    { _id: body.clientId },
     {
       $push: {
         sales: {
