@@ -94,7 +94,7 @@ async function insertCharges(body) {
 
   const created = await insertChargesDb(charge);
 
-  await updateClientCheckingAccount(body.clientId, body.amount);
+  await updateClientCheckingAccount(body.clientId, body.amount * -1);
 
   if (created) return { status: 201, body: created };
 

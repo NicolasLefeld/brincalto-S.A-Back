@@ -7,9 +7,7 @@ async function autoIncrementIdDb(type) {
     const chargesLastIdPlusOne = parseInt(extras.chargesLastId) + 1;
 
     await extrasSchema.updateOne({
-      $inc: {
-        chargesLastId: chargesLastIdPlusOne,
-      },
+      chargesLastId: chargesLastIdPlusOne,
     });
 
     return chargesLastIdPlusOne;
@@ -17,9 +15,7 @@ async function autoIncrementIdDb(type) {
     const paymentsLastIdPlusOne = parseInt(extras.paymentsLastId) + 1;
 
     await extrasSchema.updateOne({
-      $inc: {
-        paymentsLastId: paymentsLastIdPlusOne,
-      },
+      paymentsLastId: paymentsLastIdPlusOne,
     });
 
     return paymentsLastIdPlusOne;

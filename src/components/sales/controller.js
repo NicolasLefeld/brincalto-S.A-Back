@@ -143,7 +143,6 @@ async function retrieveRemitos() {
         { _id: remito.product_id },
         projection
       );
-      console.log(product);
       const client = await retrieveClientDbById(remito.client_id, projection);
 
       if (product[0]) {

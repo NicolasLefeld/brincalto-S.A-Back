@@ -34,7 +34,7 @@ async function retrievePayments() {
           check: {},
         };
 
-        if (payment.type === "check") {
+        if (payment.type.includes("check")) {
           const checkData = await retrieveCheckDbById(
             payment.check_id,
             "_id check_number status"
@@ -74,9 +74,9 @@ async function insertPayments(body) {
   };
 
   if (paymentMethod === "checkThirdParty") {
-    const checkInserted = await changeCheckStatus(body.checkId, providerId);
+    await changeCheckStatus(body.checkId, providerId);
 
-    payment.check_id = checkInserted._id;
+    payment.check_id = body.checkId;
   } else if (paymentMethod === "checkOwn") {
     const checkInfo = {
       check_number: body.checkNumber,
