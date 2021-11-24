@@ -64,19 +64,24 @@ async function retrievePayments() {
 }
 
 async function insertPayments(body) {
-  const { paymentMethod, providerId, amount, date } = body;
+  const { paymentMethod, providerId, amount, date, checkId } = body;
   let payment = {
     type: paymentMethod,
     provider_id: providerId,
     payment_comment: body.paymentComment,
     amount,
     date,
+    check_id: "",
+    comment_others: "",
   };
 
   if (paymentMethod === "checkThirdParty") {
-    await changeCheckStatus(body.checkId, providerId);
+    const check = await retrieveCheckDbById(checkId);
 
-    payment.check_id = body.checkId;
+    await changeCheckStatus(checkId, providerId);
+
+    payment.check_id = checkId;
+    payment.amount = check.amount;
   } else if (paymentMethod === "checkOwn") {
     const checkInfo = {
       check_number: body.checkNumber,
