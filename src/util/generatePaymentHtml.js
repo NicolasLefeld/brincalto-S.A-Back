@@ -11,7 +11,6 @@ async function generateRemitoHtml(paymentsInfo) {
   const todayFormated = getDateFormated(today);
 
   paymentsInfo.forEach((paymentInfo) => {
-    console.log(paymentInfo);
     const { type, amount, check } = paymentInfo.payment;
     totalAmount += amount;
     if (type.includes("check")) {
