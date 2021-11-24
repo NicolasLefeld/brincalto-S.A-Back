@@ -110,7 +110,7 @@ async function removeCharges(id) {
     client_id,
   } = await retrieveChargesByIdDb(id);
 
-  await updateClientCheckingAccount(client_id, amount * -1);
+  await updateClientCheckingAccount(client_id, amount);
 
   const removed = await removeChargesDb(chargesId);
 
