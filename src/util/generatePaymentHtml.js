@@ -1,6 +1,6 @@
 const getDateFormated = require("./getDateFormated");
 const writtenNumber = require("written-number");
-const autoIncrementIdDb = require("../util/autoIncrementIdDb")
+const autoIncrementIdDb = require("../util/autoIncrementIdDb");
 
 async function generateRemitoHtml(paymentsInfo) {
   let totalAmount = 0;
@@ -11,24 +11,24 @@ async function generateRemitoHtml(paymentsInfo) {
   const todayFormated = getDateFormated(today);
 
   paymentsInfo.forEach((paymentInfo) => {
-    totalAmount += paymentInfo.amount;
-    const { type } = paymentInfo.payment;
+    const { type, amount, check, commentOthers } = paymentInfo.payment;
+    totalAmount += amount;
     if (type.includes("check")) {
-      const { amount, expiration_date, check_number } = paymentInfo.check;
+      const { amount, expiration_date, check_number } = check;
       details += `
       <tr>
         <td>Cheque</td>
         <td>${check_number}</td>
         <td>${getDateFormated(expiration_date)}</td>
-        <td>${amount}</td>
+        <td>$ ${amount}</td>
       </tr>`;
     } else {
       details += `
       <tr>
-        <td>Efectivo</td>
-        <td>&nbsp;</td>
+        <td>${type === "cash" ? "Efectivo" : "Otros"}</td>
+        <td>${type === "others" ? commentOthers : "&nbsp;"}</td>
         <td>${todayFormated}</td>
-        <td>${paymentInfo.amount}</td>
+        <td>$ ${amount}</td>
       </tr>`;
     }
   });

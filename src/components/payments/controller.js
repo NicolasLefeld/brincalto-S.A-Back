@@ -71,8 +71,6 @@ async function insertPayments(body) {
     payment_comment: body.paymentComment,
     amount,
     date,
-    check_id: "",
-    comment_others: "",
   };
 
   if (paymentMethod === "checkThirdParty") {
