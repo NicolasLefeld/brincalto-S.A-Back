@@ -11,8 +11,8 @@ async function generateRemitoHtml(paymentsInfo) {
   const todayFormated = getDateFormated(today);
 
   paymentsInfo.forEach((paymentInfo) => {
-    
     const { type, amount: paymentAmount } = paymentInfo.payment;
+    observations += `${paymentInfo.paymentComment}<br>`
     totalAmount += paymentAmount;
     if (type.includes("check")) {
       const { amount: checkAmount, expiration_date, check_number } = paymentInfo.check;
@@ -78,6 +78,7 @@ async function generateRemitoHtml(paymentsInfo) {
         white-space: nowrap;
       }
       .p12 {
+        font: 12px "Arial";
         text-align: left;
         padding-left: 9px;
         margin-top: 31px;
@@ -183,7 +184,7 @@ async function generateRemitoHtml(paymentsInfo) {
         <table>
           <tr>
             <td>LA CANTIDAD DE PESOS: </td>
-            <td>${totalAmount}</td>
+            <td>$ ${totalAmount}</td>
           </tr>
           <tr>
             <td>SON: </td>
