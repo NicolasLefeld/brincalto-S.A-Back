@@ -5,14 +5,14 @@ const autoIncrementIdDb = require("../util/autoIncrementIdDb");
 async function generateRemitoHtml(paymentsInfo) {
   let totalAmount = 0;
   let details = "";
-  let observations = "";
+  let observations = paymentsInfo[0].paymentComment;
   let paymentPdfId = await autoIncrementIdDb("payment");
   let today = new Date();
   const todayFormated = getDateFormated(today);
 
   paymentsInfo.forEach((paymentInfo) => {
     const { type, amount: paymentAmount } = paymentInfo.payment;
-    observations += `${paymentInfo.paymentComment}<br>`
+
     totalAmount += paymentAmount;
     if (type.includes("check")) {
       const { amount: checkAmount, expiration_date, check_number } = paymentInfo.check;

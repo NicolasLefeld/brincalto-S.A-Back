@@ -2,7 +2,7 @@ function defineCorsOptions() {
   const whitelist = [
     "https://brincalto-front.herokuapp.com/",
     "https://brincalto-front.herokuapp.com",
-    "http://brincalto-front.herokuapp.com"
+    "http://brincalto-front.herokuapp.com",
   ];
 
   const corsOptions = {
