@@ -3,6 +3,12 @@ function defineCorsOptions() {
     "https://brincalto-front.herokuapp.com/",
     "https://brincalto-front.herokuapp.com",
     "http://brincalto-front.herokuapp.com",
+    "http://brincalto.com.ar/",
+    "https://brincalto.com.ar/",
+    "https://brincalto.com.ar",
+    "https://brincalto-fe.herokuapp.com/",
+    "https://brincalto-fe.herokuapp.com",
+    "http://brincalto-fe.herokuapp.com"
   ];
 
   const corsOptions = {
